@@ -1,0 +1,20 @@
+Hello pilot!
+
+Get ready for the challenge
+of your life.~
+Use arrow keys to steer ship.~
+Use <left-ctrl> key to fire bullet.~
+
+Use <left-shift> key
+
+to launch cruise missile.~
+
+Destroy all asteroids
+
+to get to the next stage.~
+
+Collect power-ups to improve
+
+your ship!~
+
+Let's start and clear the first stage!

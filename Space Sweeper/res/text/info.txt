@@ -1,0 +1,13 @@
+NOTICE
+
+This game is a raw prototype and not intended to be a finished, polished and complete game. The idea of this prototype is to test and improve the Java port of Cogaen Version 3.1 as well as other projects. Related projects are: Cogaen Core, Cogaen LWJGL.
+
+DEVELOPMENT
+
+This software is developed by the Cogaen Development Team. Please have a look at our project home page for further details: www.cogaen.org
+
+LINKS
+
+www.cogaen.org
+games.fh-hagenberg.at
+www.wo-ho.at

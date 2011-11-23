@@ -1,0 +1,19 @@
+Version 2.3.5
+
+Added guide text and random messages to game play.
+
+Version 2.3.4
+
+Better support when running as Java Applet including bug fixes. Added cruise missiles.  Adapted thrust sound.
+
+Version 2.3.3
+
+Added 'Triple Kill' bonus. Added rockets as secondary weapon. Added advanced particle effects. Works as Java Applet in browser. Fixed bug concerning mini-map.
+
+Version 2.3.2
+
+Added in-game messages. HUD does not hide part of the game world anymore. Bug Fix: invulnerability after player ship has been destroyed didn't work as expected. Bug Fix: didn't display correct number of lives. 
+
+Version 2.3.1
+
+Added loading screen. Bullet speed is now calculated according to velocity of ship. No score for hitting asteroids with ship. Particles effect now use color fade over time.

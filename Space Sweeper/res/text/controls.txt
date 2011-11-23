@@ -1,0 +1,12 @@
+GAME CONTROLS
+
+
+Use <left>, <right> and <up> keys to steer ship.
+
+Press <left-ctrl> to fire bullet, <left-shift> to launch missile.
+
+Press <F11> to toggle full-screen mode. Press <F10> to toggle vsync.
+
+Use <p> to pause the game. Press <F1> to toggle in-game console.
+
+<ESC> aborts the game and brings you back to the main menu.

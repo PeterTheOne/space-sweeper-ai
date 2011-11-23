@@ -1,0 +1,23 @@
+Version 2.3.0
+
+Added first version of graphical HUD. Added overheat and cooler powerup. Fixed bug: not responding to window close request in copyright state.
+
+Version 2.2.5
+
+Toggling to fullscreen and vsync works in all game states. Bug fixes.
+
+Version 2.2.4
+
+Placed in-game console on top of screen. Some bug fixes.
+
+Version 2.2.3
+
+Fixed bug: continues playing thrust sound when ship is deostroyed.
+
+Version 2.2.2
+
+Powerups are only consumed when needed. Version number is now display in window title.
+
+Version 2.2.1
+
+Size of HUDs is now independent from screen resolution.

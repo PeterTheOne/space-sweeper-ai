@@ -1,0 +1,11 @@
+Version 2.3.8
+
+Added Applet parameter to start in full-screen mode. Cruise missiles are lauchned with left shift key instead of left alt. Applet version does not create property file.
+
+Version 2.3.7
+
+Cruise missiles select new target if current target is destroyed. Multiple shots per key press are fired. Fixed bug concerning camera-shake. Added some new messages displayed during game.
+
+Version 2.3.6
+
+New version of HUD. Improved sprite images. Changed power-up policy. Power-up time-to-live set to 10 seconds. Power-Ups start to blink before disappearance.  Camera-shake effect when player dies. Application now starts with info screen. Added some additional fade effects.
