@@ -14,6 +14,7 @@ import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.property.PropertyService;
 import org.cogaen.spacesweeper.SpaceSweeper;
+import org.cogaen.spacesweeper.entity.AIShipEntity;
 import org.cogaen.spacesweeper.entity.BigAsteroid;
 import org.cogaen.spacesweeper.entity.MediumAsteroid;
 import org.cogaen.spacesweeper.entity.PowerUp;
@@ -32,7 +33,9 @@ import org.cogaen.time.Timer;
 public class GameLogic implements Engageable, EventListener {
 
 	public static final CogaenId PLAYER_ONE_ID = new CogaenId("Player1");
+	public static final CogaenId AI_PLAYER_ONE_ID = new CogaenId("AIPlayer1");
 	public static final CogaenId NEW_SHIP = new CogaenId("NewShip");
+	public static final CogaenId NEW_AI_SHIP = new CogaenId("NewAIShip");
 	public static final CogaenId NEW_STAGE = new CogaenId("NewStage");
 	public static final CogaenId POWER_UP = new CogaenId("PowerUp");
 	public static final CogaenId GAME_OVER = new CogaenId("GameOver");
@@ -103,6 +106,7 @@ public class GameLogic implements Engageable, EventListener {
 		
 		this.stage = 0;
 		createShip();
+		createAIShip();
 		this.eventSrv.dispatchEvent(new StageUpdateEvent(this.stage + 1));
 		this.eventSrv.dispatchEvent(new SimpleEvent(NEW_STAGE), NEW_STAGE_DELAY);
 
@@ -131,6 +135,8 @@ public class GameLogic implements Engageable, EventListener {
 			handleDestroyed((DestroyedEvent) event);
 		} else if(event.isOfType(NEW_SHIP)) {
 			createShip();
+		} else if(event.isOfType(NEW_AI_SHIP)) {
+			createAIShip();
 		} else if (event.isOfType(NEW_STAGE)) {
 			createNewState();
 		} else if (event.isOfType(POWER_UP)) {
@@ -200,6 +206,15 @@ public class GameLogic implements Engageable, EventListener {
 		}
 		ShipEntity ship = new ShipEntity(this.core, PLAYER_ONE_ID);
 		ship.initialize(0,  0);
+		this.entitySrv.addEntity(ship);
+	}
+
+	private void createAIShip() {
+		if (this.entitySrv.hasEntity(AI_PLAYER_ONE_ID)) {
+			return;
+		}
+		AIShipEntity ship = new AIShipEntity(this.core, AI_PLAYER_ONE_ID);
+		ship.initialize(0, 10);
 		this.entitySrv.addEntity(ship);
 	}
 	

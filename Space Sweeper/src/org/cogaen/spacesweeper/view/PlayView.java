@@ -33,6 +33,7 @@ import org.cogaen.property.PropertyService;
 import org.cogaen.resource.ResourceService;
 import org.cogaen.resource.TextHandle;
 import org.cogaen.spacesweeper.SpaceSweeper;
+import org.cogaen.spacesweeper.entity.AIShipEntity;
 import org.cogaen.spacesweeper.entity.BigAsteroid;
 import org.cogaen.spacesweeper.entity.BulletEntity;
 import org.cogaen.spacesweeper.entity.MediumAsteroid;
@@ -562,6 +563,10 @@ public class PlayView extends View implements EventListener {
 
 	private void handleSpawn(SpawnEvent spawn) {
 		if (spawn.isEntityType(ShipEntity.TYPE)) {
+			ShipRepresentation er = new ShipRepresentation(getCore(), spawn.getEntityId());
+			addRepresentation(spawn.getEntityId(), er);
+			er.setPose(spawn.getPosX(), spawn.getPosY(), spawn.getAngle());
+		} else if (spawn.isEntityType(AIShipEntity.TYPE)) {
 			ShipRepresentation er = new ShipRepresentation(getCore(), spawn.getEntityId());
 			addRepresentation(spawn.getEntityId(), er);
 			er.setPose(spawn.getPosX(), spawn.getPosY(), spawn.getAngle());

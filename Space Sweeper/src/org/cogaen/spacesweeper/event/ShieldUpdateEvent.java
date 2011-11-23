@@ -8,9 +8,11 @@ public class ShieldUpdateEvent extends Event {
 	public static final CogaenId TYPE_ID = new CogaenId("ShieldUpdate");
 
 	private double shieldState;
+	private CogaenId entityType;
 	
-	public ShieldUpdateEvent(double state) {
+	public ShieldUpdateEvent(double state, CogaenId entityType) {
 		this.shieldState = state;
+		this.entityType = entityType;
 	}
 	
 	@Override
@@ -20,5 +22,9 @@ public class ShieldUpdateEvent extends Event {
 	
 	public double getShieldState() {
 		return this.shieldState;
+	}
+	
+	public CogaenId getEntityType() {
+		return this.entityType;
 	}
 }

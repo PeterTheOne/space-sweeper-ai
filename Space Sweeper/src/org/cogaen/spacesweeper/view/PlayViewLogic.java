@@ -14,6 +14,7 @@ import org.cogaen.name.CogaenId;
 import org.cogaen.property.PropertyService;
 import org.cogaen.resource.ResourceService;
 import org.cogaen.spacesweeper.SpaceSweeper;
+import org.cogaen.spacesweeper.entity.ShipEntity;
 import org.cogaen.spacesweeper.event.MessageEvent;
 import org.cogaen.spacesweeper.event.ShieldUpdateEvent;
 import org.cogaen.spacesweeper.event.SoundEvent;
@@ -125,6 +126,9 @@ public class PlayViewLogic extends Logic implements EventListener {
 	}
 
 	private void handleShieldUpdate(ShieldUpdateEvent event) {
+		if (event.getEntityType() != ShipEntity.TYPE) {
+			return;
+		}
 		if (this.shieldWarning && event.getShieldState() <= 0.05) {
 			this.evtSrv.dispatchEvent(new MessageEvent("Warning, Shields Low!"), SHIELD_WARNING_DELAY);						
 			this.shieldWarning = false;

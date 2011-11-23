@@ -42,7 +42,7 @@ public class ShieldComponent extends Component implements ShieldState {
 		super.engage();
 		this.invulnerable = (Invulnerable) getParent().getAttribute(Invulnerable.ATTR_ID);
 		this.state = 1.0;
-		this.evtSrv.dispatchEvent(new ShieldUpdateEvent(this.state));		
+		this.evtSrv.dispatchEvent(new ShieldUpdateEvent(this.state, getParent().getType()));		
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class ShieldComponent extends Component implements ShieldState {
 			this.state = Math.max(0, this.state - this.damagePerHit);			
 		}
 				
-		this.evtSrv.dispatchEvent(new ShieldUpdateEvent(this.state));
+		this.evtSrv.dispatchEvent(new ShieldUpdateEvent(this.state, getParent().getType()));
 	}
 
 	@Override

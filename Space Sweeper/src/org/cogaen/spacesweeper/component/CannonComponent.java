@@ -115,7 +115,7 @@ public class CannonComponent extends UpdateableComponent {
 	public void update() {
 		// calculate current heat
 		this.heat = Math.max(this.heat - this.timer.getDeltaTime() * this.coolDown, 0);
-		this.evtSrv.dispatchEvent(new HeatUpdateEvent(this.heat));
+		this.evtSrv.dispatchEvent(new HeatUpdateEvent(this.heat, getParent().getType()));
 
 		// ensures that only one shot is fired per button press
 		if (!this.ctrl.getButton(this.fireButton)) {

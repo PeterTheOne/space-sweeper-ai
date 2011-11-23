@@ -373,11 +373,15 @@ public class GameHud extends AbstractHud implements EventListener {
 	}
 
 	private void handleShieldStatusUpdate(ShieldUpdateEvent event) {
-		this.shieldUpdater.setPercentage(event.getShieldState());
+		if (event.getEntityType() == ShipEntity.TYPE) {
+			this.shieldUpdater.setPercentage(event.getShieldState());
+		}
 	}
 
 	private void handleHeatStatusUpdate(HeatUpdateEvent event) {
-		this.heatUpdater.setPercentage(event.getHeatState());
+		if (event.getEntityType() == ShipEntity.TYPE) {
+			this.heatUpdater.setPercentage(event.getHeatState());
+		}
 	}
 	
 	private void handleScoreUpdate(ScoreUpdateEvent event) {
