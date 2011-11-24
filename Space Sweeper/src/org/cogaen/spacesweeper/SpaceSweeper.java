@@ -287,7 +287,7 @@ public class SpaceSweeper extends Applet implements EventListener {
 		stateSrv.addTransition(CopyrightState.ID, GameStateService.END_STATE_ID, CopyrightState.END_OF_COPYRIGHT);
 
 		CogaenId startId = new CogaenId(PropertyService.getInstance(this.core).getProperty(START_STATE_PROP, SplashState.ID.toString()));
-		stateSrv.setCurrentState(startId);
+		stateSrv.setCurrentState(PlayState.ID);
 	}
 
 	@Override

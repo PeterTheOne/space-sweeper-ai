@@ -4,7 +4,6 @@ import org.cogaen.core.Core;
 import org.cogaen.entity.Entity;
 import org.cogaen.entity.EntityService;
 import org.cogaen.event.Event;
-import org.cogaen.lwjgl.input.ControllerComponent;
 import org.cogaen.name.CogaenId;
 import org.cogaen.spacesweeper.component.AIComponent;
 import org.cogaen.spacesweeper.component.CannonComponent;
@@ -36,7 +35,7 @@ public class AIShipEntity extends PhysicsEntity {
 		super(core, id, TYPE, RADIUS);
 		
 		addComponent(new MotionComponent(BodyAttrId));
-		addComponent(new AIComponent(NUM_BUTTONS));
+		addComponent(new AIComponent(NUM_BUTTONS, PhysicsEntity.BodyAttrId));
 		addComponent(new CannonComponent(FIRE_BUTTON, PhysicsEntity.BodyAttrId));
 		addComponent(new InvulnerabilityComponent(INVULNERABILITY_TIME));
 		addComponent(new ShieldComponent());

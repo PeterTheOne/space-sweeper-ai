@@ -276,7 +276,7 @@ public class PlayView extends View implements EventListener {
 		ps.setEndSize(4.0);
 		ps.setStartColor(new Color(1, 1, 1, 1));
 		ps.setEndColor(new Color(1, 1, 1, 0));
-		psSrv.addToPool(JET_STREAM_POOL, ps, 2);
+		psSrv.addToPool(JET_STREAM_POOL, ps, 4);
 
 		// particle pool 'rocket jet stream'
 		psSrv.createPool(ROCKET_JET_STREAM_POOL);

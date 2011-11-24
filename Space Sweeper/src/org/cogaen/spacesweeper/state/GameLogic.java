@@ -107,8 +107,8 @@ public class GameLogic implements Engageable, EventListener {
 		this.stage = 0;
 		createShip();
 		createAIShip();
-		this.eventSrv.dispatchEvent(new StageUpdateEvent(this.stage + 1));
-		this.eventSrv.dispatchEvent(new SimpleEvent(NEW_STAGE), NEW_STAGE_DELAY);
+		//this.eventSrv.dispatchEvent(new StageUpdateEvent(this.stage + 1));
+		//this.eventSrv.dispatchEvent(new SimpleEvent(NEW_STAGE), NEW_STAGE_DELAY);
 
 		this.lastDrop = this.timer.getTime();
 		this.engaged = true;
@@ -205,7 +205,7 @@ public class GameLogic implements Engageable, EventListener {
 			return;
 		}
 		ShipEntity ship = new ShipEntity(this.core, PLAYER_ONE_ID);
-		ship.initialize(0,  0);
+		ship.initialize(-5,  0);
 		this.entitySrv.addEntity(ship);
 	}
 
@@ -214,7 +214,7 @@ public class GameLogic implements Engageable, EventListener {
 			return;
 		}
 		AIShipEntity ship = new AIShipEntity(this.core, AI_PLAYER_ONE_ID);
-		ship.initialize(0, 10);
+		ship.initialize(0, 0);
 		this.entitySrv.addEntity(ship);
 	}
 	
