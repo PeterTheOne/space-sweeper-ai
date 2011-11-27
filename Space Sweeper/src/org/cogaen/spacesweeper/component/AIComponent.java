@@ -30,8 +30,6 @@ THE SOFTWARE.
 
 package org.cogaen.spacesweeper.component;
 
-import java.text.DecimalFormat;
-
 import org.cogaen.entity.ComponentEntity;
 import org.cogaen.entity.EntityService;
 import org.cogaen.entity.UpdateableComponent;
@@ -81,8 +79,8 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 	@Override
 	public void engage() {
 		super.engage();
-		this.targetPosX = 0;
-		this.targetPosY = 8;
+		this.targetPosX = this.body.getPositionX();
+		this.targetPosY = this.body.getPositionY();
 		this.thrustPid = new PidController(0.03, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
 		this.anglePid = new PidController(250.0, 20.0, 0.0);
@@ -123,14 +121,14 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		}
 		
 		if (this.body.getPositionY() > 0 && this.targetPosY < 0) {
-			double altTargetPosY = this.targetPosY + levelWidth;
+			double altTargetPosY = this.targetPosY + levelHeight;
 			double altDist = Math.abs(altTargetPosY - this.body.getPositionY());
 			double dist = Math.abs(this.targetPosY - this.body.getPositionY());
 			if (altDist < dist) {
 				this.targetPosY = altTargetPosY;
 			}
 		} else if (this.body.getPositionY() < 0 && this.targetPosY > 0) {
-			double altTargetPosY = this.targetPosY - levelWidth;
+			double altTargetPosY = this.targetPosY - levelHeight;
 			double altDist = Math.abs(altTargetPosY - this.body.getPositionY());
 			double dist = Math.abs(this.targetPosY - this.body.getPositionY());
 			if (altDist < dist) {
@@ -144,12 +142,10 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		double dy = this.targetPosY - this.body.getPositionY();
 		double dl = Math.sqrt(dx * dx + dy * dy);
 		
-		double maxSpeed = 6;
+		double maxSpeed = 8;
 		double targetSpeed = 0;
-		if (dl > 5) {
+		if (dl > 4) {
 			targetSpeed = maxSpeed;
-		} else if (dl > 4) {
-			targetSpeed = maxSpeed / 2d;
 		} else {
 			targetSpeed = 0;
 		}
@@ -161,9 +157,10 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		this.vPos = this.thrustPid.getOutput();
 		this.vPos = this.vPos > 1 ? 1 : this.vPos;
 		
+		LoggingService log = LoggingService.getInstance(getCore());
 		
-		//log.logInfo("AIComp", "speed: " + speed);
-		//log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
+		log.logInfo("AIComp", "speed: " + speed);
+		log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
 	}
 
 	private void updateAngle() {	
@@ -178,16 +175,6 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		tyr /= l;
 		
 		this.anglePid.update(txr, this.timer.getDeltaTime());
-		// TODO: programm better solution for infinite level...
-		// this if is because of the infinite level
-		/*if (tyr < 0) {
-			// move to the target
-			this.body.setAngularAcceleration(-this.anglePid.getOutput());
-		} else {
-			// move away, so that you cross the level border
-			this.body.setAngularAcceleration(this.anglePid.getOutput());
-		}*/
-
 		this.body.setAngularAcceleration(this.anglePid.getOutput());
 	}
 	
