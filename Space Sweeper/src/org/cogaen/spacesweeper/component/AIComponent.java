@@ -38,6 +38,7 @@ import org.cogaen.event.EventListener;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
 import org.cogaen.name.CogaenId;
+import org.cogaen.property.PropertyService;
 import org.cogaen.spacesweeper.entity.ShipEntity;
 import org.cogaen.spacesweeper.physics.Body;
 import org.cogaen.spacesweeper.state.GameLogic;
@@ -46,10 +47,19 @@ import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
 
 public class AIComponent extends UpdateableComponent implements ControllerState, EventListener {
+	
+	//TODO: create own ANGULAR_ACCELERATION_PROP and DEFAULT_LINEAR_ACCELERATION
+	private static final double DEFAULT_ANGULAR_ACCELERATION = 50;
+	private static final String ANGULAR_ACCELERATION_PROP = "angularAcceleration";
+	private static final double DEFAULT_LINEAR_ACCELERATION = 15;
+	private static final String LINEAR_ACCELERATION_PROP = "linearAcceleration";
 
 	private double hPos;
 	private double vPos;
 	private boolean buttons[];
+	
+	private double angularAcceleration;
+	private double linearAcceleration;
 
 	private CogaenId bodyAttrId;
 	private Body body;
@@ -86,6 +96,10 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		this.anglePid = new PidController(250.0, 20.0, 0.0);
 		this.anglePid.setTarget(0);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
+		
+		PropertyService prpSrv = PropertyService.getInstance(getCore());
+		this.angularAcceleration = prpSrv.getDoubleProperty(ANGULAR_ACCELERATION_PROP, DEFAULT_ANGULAR_ACCELERATION);
+		this.linearAcceleration = prpSrv.getDoubleProperty(LINEAR_ACCELERATION_PROP, DEFAULT_LINEAR_ACCELERATION);
 	}
 
 	@Override
@@ -175,7 +189,13 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		tyr /= l;
 		
 		this.anglePid.update(txr, this.timer.getDeltaTime());
-		this.body.setAngularAcceleration(this.anglePid.getOutput());
+		double angularAcc = this.anglePid.getOutput();
+		if (angularAcc > this.angularAcceleration) {
+			angularAcc = this.angularAcceleration;
+		} else if (angularAcc < - this.angularAcceleration) {
+			angularAcc = - this.angularAcceleration;
+		}
+		this.body.setAngularAcceleration(angularAcc);
 	}
 	
 	@Override
