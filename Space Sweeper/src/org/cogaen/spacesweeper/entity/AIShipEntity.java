@@ -5,12 +5,13 @@ import org.cogaen.entity.Entity;
 import org.cogaen.entity.EntityService;
 import org.cogaen.event.Event;
 import org.cogaen.name.CogaenId;
-import org.cogaen.spacesweeper.component.AIComponent;
+import org.cogaen.spacesweeper.component.OperationalAIComponent;
 import org.cogaen.spacesweeper.component.CannonComponent;
 import org.cogaen.spacesweeper.component.InvulnerabilityComponent;
 import org.cogaen.spacesweeper.component.MotionComponent;
 import org.cogaen.spacesweeper.component.RocketLauncherComponent;
 import org.cogaen.spacesweeper.component.ShieldComponent;
+import org.cogaen.spacesweeper.component.TacticalAIComponent;
 import org.cogaen.spacesweeper.event.ShieldState;
 import org.cogaen.spacesweeper.physics.Body;
 import org.cogaen.spacesweeper.physics.CollisionEvent;
@@ -34,8 +35,9 @@ public class AIShipEntity extends PhysicsEntity {
 	public AIShipEntity(Core core, CogaenId id) {
 		super(core, id, TYPE, RADIUS);
 		
-		addComponent(new MotionComponent(BodyAttrId));
-		addComponent(new AIComponent(NUM_BUTTONS, PhysicsEntity.BodyAttrId));
+		addComponent(new MotionComponent(PhysicsEntity.BodyAttrId));
+		addComponent(new OperationalAIComponent(NUM_BUTTONS, PhysicsEntity.BodyAttrId));
+		addComponent(new TacticalAIComponent());
 		addComponent(new CannonComponent(FIRE_BUTTON, PhysicsEntity.BodyAttrId));
 		addComponent(new InvulnerabilityComponent(INVULNERABILITY_TIME));
 		addComponent(new ShieldComponent());

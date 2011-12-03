@@ -46,20 +46,11 @@ import org.cogaen.spacesweeper.util.PidController;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
 
-public class AIComponent extends UpdateableComponent implements ControllerState, EventListener {
-	
-	//TODO: create own ANGULAR_ACCELERATION_PROP and DEFAULT_LINEAR_ACCELERATION
-	private static final double DEFAULT_ANGULAR_ACCELERATION = 50;
-	private static final String ANGULAR_ACCELERATION_PROP = "angularAcceleration";
-	private static final double DEFAULT_LINEAR_ACCELERATION = 15;
-	private static final String LINEAR_ACCELERATION_PROP = "linearAcceleration";
+public class OperationalAIComponent extends UpdateableComponent implements ControllerState, EventListener {
 
 	private double hPos;
 	private double vPos;
 	private boolean buttons[];
-	
-	private double angularAcceleration;
-	private double linearAcceleration;
 
 	private CogaenId bodyAttrId;
 	private Body body;
@@ -73,7 +64,7 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 	private double levelWidth = 40;
 	private double levelHeight = 30;
 	
-	public AIComponent(int nButtons, CogaenId bodyAttrId) {
+	public OperationalAIComponent(int nButtons, CogaenId bodyAttrId) {
 		super();
 		this.buttons = new boolean[nButtons];
 		this.bodyAttrId = bodyAttrId;
@@ -93,13 +84,9 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		this.targetPosY = this.body.getPositionY();
 		this.thrustPid = new PidController(0.03, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
-		this.anglePid = new PidController(250.0, 20.0, 0.0);
+		this.anglePid = new PidController(2.50, 0.20, 0.0);
 		this.anglePid.setTarget(0);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
-		
-		PropertyService prpSrv = PropertyService.getInstance(getCore());
-		this.angularAcceleration = prpSrv.getDoubleProperty(ANGULAR_ACCELERATION_PROP, DEFAULT_ANGULAR_ACCELERATION);
-		this.linearAcceleration = prpSrv.getDoubleProperty(LINEAR_ACCELERATION_PROP, DEFAULT_LINEAR_ACCELERATION);
 	}
 
 	@Override
@@ -112,6 +99,11 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		getTargetPosition();
 		updateThrust();
 		updateAngle();
+
+		this.vPos = this.vPos > 1 ? 1 : this.vPos;
+		this.vPos = this.vPos < 0 ? 0 : this.vPos;
+		this.hPos = this.hPos > 1 ? 1 : this.hPos;
+		this.hPos = this.hPos < -1 ? -1 : this.hPos;
 	}
 
 	private void getTargetPosition() {
@@ -169,7 +161,6 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		this.thrustPid.update(speed, this.timer.getDeltaTime());
 
 		this.vPos = this.thrustPid.getOutput();
-		this.vPos = this.vPos > 1 ? 1 : this.vPos;
 		
 		LoggingService log = LoggingService.getInstance(getCore());
 		
@@ -189,13 +180,8 @@ public class AIComponent extends UpdateableComponent implements ControllerState,
 		tyr /= l;
 		
 		this.anglePid.update(txr, this.timer.getDeltaTime());
-		double angularAcc = this.anglePid.getOutput();
-		if (angularAcc > this.angularAcceleration) {
-			angularAcc = this.angularAcceleration;
-		} else if (angularAcc < - this.angularAcceleration) {
-			angularAcc = - this.angularAcceleration;
-		}
-		this.body.setAngularAcceleration(angularAcc);
+		
+		this.hPos = -this.anglePid.getOutput();
 	}
 	
 	@Override
