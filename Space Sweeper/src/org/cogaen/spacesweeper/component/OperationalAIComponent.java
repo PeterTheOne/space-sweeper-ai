@@ -143,6 +143,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		double dy = this.targetPosY - this.body.getPositionY();
 		double dl = Math.sqrt(dx * dx + dy * dy);
 		
+		//TODO: move this to tactic??
 		double maxSpeed = 8;
 		double targetSpeed = 0;
 		if (dl > 4) {
