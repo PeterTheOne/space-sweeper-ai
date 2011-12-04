@@ -31,22 +31,20 @@ THE SOFTWARE.
 package org.cogaen.spacesweeper.component;
 
 import org.cogaen.entity.ComponentEntity;
-import org.cogaen.entity.EntityService;
 import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
 import org.cogaen.name.CogaenId;
-import org.cogaen.property.PropertyService;
-import org.cogaen.spacesweeper.entity.ShipEntity;
+import org.cogaen.spacesweeper.entity.OperationalAIInterface;
 import org.cogaen.spacesweeper.physics.Body;
-import org.cogaen.spacesweeper.state.GameLogic;
 import org.cogaen.spacesweeper.util.PidController;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
 
-public class OperationalAIComponent extends UpdateableComponent implements ControllerState, EventListener {
+public class OperationalAIComponent extends UpdateableComponent implements 
+		ControllerState, OperationalAIInterface, EventListener {
 
 	private double hPos;
 	private double vPos;
@@ -74,14 +72,16 @@ public class OperationalAIComponent extends UpdateableComponent implements Contr
 	public void initialize(ComponentEntity parent) {
 		super.initialize(parent);
 		parent.addAttribute(ControllerState.ID, this);
+		parent.addAttribute(OperationalAIInterface.ATTR_ID, this);
 		this.body = (Body) getParent().getAttribute(this.bodyAttrId);
 	}
 
 	@Override
 	public void engage() {
 		super.engage();
-		this.targetPosX = this.body.getPositionX();
-		this.targetPosY = this.body.getPositionY();
+		//TODO: remove bug: ship disappears  when 0 and 0
+		this.targetPosX = 0;//this.body.getPositionX();
+		this.targetPosY = 2;//this.body.getPositionY();
 		this.thrustPid = new PidController(0.03, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
 		this.anglePid = new PidController(2.50, 0.20, 0.0);
@@ -96,7 +96,7 @@ public class OperationalAIComponent extends UpdateableComponent implements Contr
 
 	@Override
 	public void update() {
-		getTargetPosition();
+		calculateShortestWay();
 		updateThrust();
 		updateAngle();
 
@@ -105,13 +105,8 @@ public class OperationalAIComponent extends UpdateableComponent implements Contr
 		this.hPos = this.hPos > 1 ? 1 : this.hPos;
 		this.hPos = this.hPos < -1 ? -1 : this.hPos;
 	}
-
-	private void getTargetPosition() {
-		ShipEntity ship = (ShipEntity) EntityService.getInstance(getCore()).getEntity(GameLogic.PLAYER_ONE_ID);
-		Body body = (Body) ship.getAttribute(this.bodyAttrId);
-		this.targetPosX = body.getPositionX();
-		this.targetPosY = body.getPositionY();
-		
+	
+	private void calculateShortestWay() {
 		if (this.body.getPositionX() > 0 && this.targetPosX < 0) {
 			double altTargetPosX = this.targetPosX + levelWidth;
 			if (Math.abs(altTargetPosX - this.body.getPositionX()) < 
@@ -199,5 +194,11 @@ public class OperationalAIComponent extends UpdateableComponent implements Contr
 	
 	public boolean getButton(int idx) {
 		return this.buttons[idx];
+	}
+
+	@Override
+	public void setTarget(double targetPosX, double targetPosY) {
+		this.targetPosX = targetPosX;
+		this.targetPosY = targetPosY;
 	}
 }

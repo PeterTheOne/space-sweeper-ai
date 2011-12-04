@@ -37,7 +37,7 @@ public class AIShipEntity extends PhysicsEntity {
 		
 		addComponent(new MotionComponent(PhysicsEntity.BodyAttrId));
 		addComponent(new OperationalAIComponent(NUM_BUTTONS, PhysicsEntity.BodyAttrId));
-		addComponent(new TacticalAIComponent());
+		addComponent(new TacticalAIComponent(PhysicsEntity.BodyAttrId));
 		addComponent(new CannonComponent(FIRE_BUTTON, PhysicsEntity.BodyAttrId));
 		addComponent(new InvulnerabilityComponent(INVULNERABILITY_TIME));
 		addComponent(new ShieldComponent());
