@@ -107,8 +107,8 @@ public class GameLogic implements Engageable, EventListener {
 		this.stage = 0;
 		createShip();
 		createAIShip();
-		//this.eventSrv.dispatchEvent(new StageUpdateEvent(this.stage + 1));
-		//this.eventSrv.dispatchEvent(new SimpleEvent(NEW_STAGE), NEW_STAGE_DELAY);
+		this.eventSrv.dispatchEvent(new StageUpdateEvent(this.stage + 1));
+		this.eventSrv.dispatchEvent(new SimpleEvent(NEW_STAGE), NEW_STAGE_DELAY);
 
 		this.lastDrop = this.timer.getTime();
 		this.engaged = true;
