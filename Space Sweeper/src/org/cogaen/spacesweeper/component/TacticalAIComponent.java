@@ -55,15 +55,33 @@ public class TacticalAIComponent extends UpdateableComponent {
 		//TODO: check state, create updateMethod for every State, avoid Objects	
 		
 		if (this.stateMachine.getCurrentState().equals(HuntState.ID)) {
-			//TODO:
-			//if (no obsticle in the way)
-			setShipAsTarget(this.enemyBody);
-			// else 
-			// avoid
+			double dx = this.enemyBody.getPositionX() - this.body.getPositionX();
+			double dy = this.enemyBody.getPositionY() - this.body.getPositionY();
+			double dl = Math.sqrt(dx * dx + dy * dy);
+			
+			//TODO: this is for line of sight thing.
+			//if (no obsticle in the way) {
+				
+				if (dl > 5) {
+					setShipAsTarget(10, this.enemyBody);
+				} else {
+					setShipAsTarget(0, this.enemyBody);
+				}
+				
+			// } else {
+				// avoid
+				//setShipAsTarget();
+			// }
+			
+			// TODO:
+			// if (enemy in front) {
+					// shoot
+			// }
 		}
 	}
 	
-	private void setShipAsTarget(Body targetBody) {
+	private void setShipAsTarget(double speed, Body targetBody) {
+		this.opAI.setTargetSpeed(speed);
 		double targetPosX = targetBody.getPositionX();
 		double targetPosY = targetBody.getPositionY();
 		this.opAI.setTarget(targetPosX, targetPosY);

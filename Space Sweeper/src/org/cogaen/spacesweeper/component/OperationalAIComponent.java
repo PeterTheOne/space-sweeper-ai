@@ -138,20 +138,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		}
 	}
 
-	private void updateThrust() {		
-		double dx = this.targetPosX - this.body.getPositionX();
-		double dy = this.targetPosY - this.body.getPositionY();
-		double dl = Math.sqrt(dx * dx + dy * dy);
-		
-		//TODO: move this to tactic??
-		double maxSpeed = 8;
-		double targetSpeed = 0;
-		if (dl > 4) {
-			targetSpeed = maxSpeed;
-		} else {
-			targetSpeed = 0;
-		}
-		this.thrustPid.setTarget(targetSpeed);
+	private void updateThrust() {
 		
 		double speed = this.body.getSpeed();
 		this.thrustPid.update(speed, this.timer.getDeltaTime());
@@ -164,7 +151,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
 	}
 
-	private void updateAngle() {	
+	private void updateAngle() {
 		double dx = this.targetPosX - this.body.getPositionX();
 		double dy = this.targetPosY - this.body.getPositionY();
 		
@@ -196,10 +183,15 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	public boolean getButton(int idx) {
 		return this.buttons[idx];
 	}
-
+	
 	@Override
 	public void setTarget(double targetPosX, double targetPosY) {
 		this.targetPosX = targetPosX;
 		this.targetPosY = targetPosY;
+	}
+	
+	@Override
+	public void setTargetSpeed(double targetSpeed) {
+		this.thrustPid.setTarget(targetSpeed);
 	}
 }
