@@ -36,9 +36,11 @@ import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
+import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.spacesweeper.entity.OperationalAIInterface;
 import org.cogaen.spacesweeper.physics.Body;
+import org.cogaen.spacesweeper.state.PlayState;
 import org.cogaen.spacesweeper.util.PidController;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
@@ -59,8 +61,8 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private Timer timer;
 	
 	//TODO: get these from level..
-	private double levelWidth = 40;
-	private double levelHeight = 30;
+	private double worldWidth;
+	private double worldHeight;
 	
 	public OperationalAIComponent(int nButtons, CogaenId bodyAttrId) {
 		super();
@@ -87,6 +89,9 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		this.anglePid = new PidController(2.50, 0.20, 0.0);
 		this.anglePid.setTarget(0);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
+		this.worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
+		double ar = SceneService.getInstance(getCore()).getAspectRatio();
+		this.worldHeight = worldWidth / ar;
 	}
 
 	@Override
@@ -108,13 +113,13 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	
 	private void calculateShortestWay() {
 		if (this.body.getPositionX() > 0 && this.targetPosX < 0) {
-			double altTargetPosX = this.targetPosX + levelWidth;
+			double altTargetPosX = this.targetPosX + worldWidth;
 			if (Math.abs(altTargetPosX - this.body.getPositionX()) < 
 					Math.abs(this.targetPosX - this.body.getPositionX())) {
 				this.targetPosX = altTargetPosX;
 			}
 		} else if (this.body.getPositionX() < 0 && this.targetPosX > 0) {
-			double altTargetPosX = this.targetPosX - levelWidth;
+			double altTargetPosX = this.targetPosX - worldWidth;
 			if (Math.abs(altTargetPosX - this.body.getPositionX()) < 
 					Math.abs(this.targetPosX - this.body.getPositionX())) {
 				this.targetPosX = altTargetPosX;
@@ -122,14 +127,14 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		}
 		
 		if (this.body.getPositionY() > 0 && this.targetPosY < 0) {
-			double altTargetPosY = this.targetPosY + levelHeight;
+			double altTargetPosY = this.targetPosY + worldHeight;
 			double altDist = Math.abs(altTargetPosY - this.body.getPositionY());
 			double dist = Math.abs(this.targetPosY - this.body.getPositionY());
 			if (altDist < dist) {
 				this.targetPosY = altTargetPosY;
 			}
 		} else if (this.body.getPositionY() < 0 && this.targetPosY > 0) {
-			double altTargetPosY = this.targetPosY - levelHeight;
+			double altTargetPosY = this.targetPosY - worldHeight;
 			double altDist = Math.abs(altTargetPosY - this.body.getPositionY());
 			double dist = Math.abs(this.targetPosY - this.body.getPositionY());
 			if (altDist < dist) {
