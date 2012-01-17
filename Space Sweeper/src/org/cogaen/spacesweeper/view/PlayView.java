@@ -58,6 +58,7 @@ import org.cogaen.spacesweeper.representation.PowerUpRepresentation;
 import org.cogaen.spacesweeper.representation.RocketRepresentation;
 import org.cogaen.spacesweeper.representation.ShipRepresentation;
 import org.cogaen.spacesweeper.representation.SmallAsteroidRepresentation;
+import org.cogaen.spacesweeper.state.FlowField;
 import org.cogaen.spacesweeper.state.GameLogic;
 import org.cogaen.spacesweeper.state.PlayState;
 import org.cogaen.spacesweeper.task.CameraShakerTask;
@@ -102,6 +103,7 @@ public class PlayView extends View implements EventListener {
 	private MiniMapHud miniMap;
 	private ConsoleHud console;
 	private PlayViewLogic viewLogic;
+	private FlowFieldView flowFieldView;
 	private CameraMover camMover;
 	private Source backgroundMusic;
 	private boolean busy;
@@ -113,6 +115,7 @@ public class PlayView extends View implements EventListener {
 		this.miniMap = new MiniMapHud(core);
 		this.messageHud = new MessageHud(core, true);
 		this.viewLogic = new PlayViewLogic(core);
+		this.flowFieldView = new FlowFieldView(core, this);
 		this.ctrl = new KeyboardController(getCore(), new CogaenId("Player1"));
 		this.ctrl.addButton(KeyCode.KEY_LCONTROL);
 		this.ctrl.addButton(KeyCode.KEY_LSHIFT);
@@ -224,6 +227,7 @@ public class PlayView extends View implements EventListener {
 		this.miniMap.engage();
 		this.messageHud.engage();
 		this.viewLogic.engage();
+		this.flowFieldView.engage();
 		if (propSrv.getDoubleProperty(VIEW_ZOOM_PROP) == 1) {
 			this.miniMap.setActive(false);
 		}
@@ -242,6 +246,7 @@ public class PlayView extends View implements EventListener {
 		TimeService.getInstance(getCore()).getTimer().setPaused(false);
 		TaskService.getInstance(getCore()).destroyTask(this.camMover);
 		this.viewLogic.disengage();
+		this.flowFieldView.disengage();
 		this.messageHud.disengage();
 		this.console.disengage();
 		this.gameHud.disengage();

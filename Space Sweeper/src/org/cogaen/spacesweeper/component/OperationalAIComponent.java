@@ -152,8 +152,8 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		
 		LoggingService log = LoggingService.getInstance(getCore());
 		
-		log.logInfo("AIComp", "speed: " + speed);
-		log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
+		//log.logInfo("AIComp", "speed: " + speed);
+		//log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
 	}
 
 	private void updateAngle() {
