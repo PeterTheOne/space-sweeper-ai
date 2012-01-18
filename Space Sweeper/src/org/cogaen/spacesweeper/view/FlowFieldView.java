@@ -27,6 +27,9 @@ public class FlowFieldView extends Logic implements EventListener {
 	private LoggingService log;
 	private EventService evntServ;
 
+	private double worldWidth;
+	private double worldHeight;
+
 	public FlowFieldView(Core core, PlayView playView) {
 		super(core);
 		this.playView = playView;
@@ -41,6 +44,10 @@ public class FlowFieldView extends Logic implements EventListener {
 		this.evntServ.addListener(this, FlowFieldEngagedEvent.TYPE_ID);
 		this.evntServ.addListener(this, FlowField.FF_DISENGAGED);
 		this.evntServ.addListener(this, FlowFieldUpdatedEvent.TYPE_ID);
+		
+		this.worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
+		double ar = SceneService.getInstance(getCore()).getAspectRatio();
+		this.worldHeight = worldWidth / ar;
 
 		super.engage();
 	}
@@ -53,7 +60,6 @@ public class FlowFieldView extends Logic implements EventListener {
 
 	@Override
 	public void handleEvent(Event event) {
-		this.log.logInfo("FlowFieldView", "handleEvent");
 		if (event.isOfType(FlowFieldEngagedEvent.TYPE_ID)) {
 			handleFFEngagedEvent((FlowFieldEngagedEvent) event);
 		} else if (event.isOfType(FlowField.FF_DISENGAGED)) {
@@ -64,8 +70,8 @@ public class FlowFieldView extends Logic implements EventListener {
 	}
 
 	private void handleFFEngagedEvent(FlowFieldEngagedEvent event) {
-		double left = - event.getHorizontalCount() / 2d;
-		double top = - event.getVerticalCount() / 2d;
+		double left = - this.worldWidth / 2d;
+		double top = - this.worldHeight / 2d;
 		for (int x = 0; x < event.getHorizontalCount(); x++) {
 			for (int y = 0; y < event.getVerticalCount(); y++) {
 				CogaenId fieldLineId = new CogaenId("FlowLine: x: " + x + ", y: " + y);
@@ -81,7 +87,7 @@ public class FlowFieldView extends Logic implements EventListener {
 	}
 
 	private void handleFFUpdatedEvent(FlowFieldUpdatedEvent event) {
-		double[][][] field = event.getField();
+		double[][][] field = event.getFlowField().getField();
 		for (int x = 0; x < field.length; x++) {
 			for (int y = 0; y < field[0].length; y++) {
 				CogaenId fieldLineId = new CogaenId("FlowLine: x: " + x + ", y: " + y);

@@ -27,11 +27,7 @@ public class FlowLineRepresentation extends BaseRepresentation {
 	
 	@Override
 	public void engage() {
-		super.engage();
-
-		LoggingService log = LoggingService.getInstance(getCore());
-		log.logInfo("FlowLineRep", "engaged");
-		
+		super.engage();		
 		setVisual();
 	}
 

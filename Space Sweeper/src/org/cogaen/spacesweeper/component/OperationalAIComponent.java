@@ -34,12 +34,15 @@ import org.cogaen.entity.ComponentEntity;
 import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
+import org.cogaen.event.EventService;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
 import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.spacesweeper.entity.OperationalAIInterface;
+import org.cogaen.spacesweeper.event.FlowFieldUpdatedEvent;
 import org.cogaen.spacesweeper.physics.Body;
+import org.cogaen.spacesweeper.state.FlowField;
 import org.cogaen.spacesweeper.state.PlayState;
 import org.cogaen.spacesweeper.util.PidController;
 import org.cogaen.time.TimeService;
@@ -63,6 +66,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	//TODO: get these from level..
 	private double worldWidth;
 	private double worldHeight;
+	private FlowField flowfield;
 	
 	public OperationalAIComponent(int nButtons, CogaenId bodyAttrId) {
 		super();
@@ -92,10 +96,14 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		this.worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
 		double ar = SceneService.getInstance(getCore()).getAspectRatio();
 		this.worldHeight = worldWidth / ar;
+		EventService evntSrv = EventService.getInstance(getCore());
+		evntSrv.addListener(this, FlowFieldUpdatedEvent.TYPE_ID);
 	}
 
 	@Override
 	public void disengage() {
+		EventService evntSrv = EventService.getInstance(getCore());
+		evntSrv.removeListener(this);
 		super.disengage();
 	}
 
@@ -157,8 +165,17 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	}
 
 	private void updateAngle() {
-		double dx = this.targetPosX - this.body.getPositionX();
-		double dy = this.targetPosY - this.body.getPositionY();
+		//TODO: remove bug: ship disappears  when 0 and 0
+		double dx = 0;
+		double dy = 2;
+		if (this.flowfield != null) {
+			dx = this.flowfield.getFlowX(
+					this.body.getPositionX(), 
+					this.body.getPositionY());
+			dy = this.flowfield.getFlowY(
+					this.body.getPositionX(), 
+					this.body.getPositionY());
+		}
 		
 		double txr = dx * Math.cos(-this.body.getAngularPosition()) - dy * Math.sin(-this.body.getAngularPosition());
 		double tyr = dy * Math.cos(-this.body.getAngularPosition()) + dx * Math.sin(-this.body.getAngularPosition());
@@ -174,9 +191,15 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	
 	@Override
 	public void handleEvent(Event event) {
-		//empty
+		if (event.isOfType(FlowFieldUpdatedEvent.TYPE_ID)) {
+			handleFlowFieldUpdatedEvent((FlowFieldUpdatedEvent) event);
+		}
 	}
 	
+	private void handleFlowFieldUpdatedEvent(FlowFieldUpdatedEvent event) {
+		this.flowfield = event.getFlowField();
+	}
+
 	public double getVerticalPosition() {
 		return this.vPos;
 	}

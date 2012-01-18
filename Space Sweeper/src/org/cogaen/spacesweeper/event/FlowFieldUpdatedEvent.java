@@ -2,15 +2,16 @@ package org.cogaen.spacesweeper.event;
 
 import org.cogaen.event.Event;
 import org.cogaen.name.CogaenId;
+import org.cogaen.spacesweeper.state.FlowField;
 
 public class FlowFieldUpdatedEvent extends Event {
 
 	public static final CogaenId TYPE_ID = new CogaenId("FF Updated");
 
-	private double[][][] field;
+	private FlowField flowField;
 	
-	public FlowFieldUpdatedEvent(double[][][] field) {
-		this.field = field;
+	public FlowFieldUpdatedEvent(FlowField flowField) {
+		this.flowField = flowField;
 	}
 	
 	@Override
@@ -18,8 +19,8 @@ public class FlowFieldUpdatedEvent extends Event {
 		return TYPE_ID;
 	}
 
-	public double[][][] getField() {
-		return this.field;
+	public FlowField getFlowField() {
+		return this.flowField;
 	}
 
 }

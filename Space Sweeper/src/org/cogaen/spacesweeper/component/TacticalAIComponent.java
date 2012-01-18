@@ -62,11 +62,11 @@ public class TacticalAIComponent extends UpdateableComponent {
 			//TODO: this is for line of sight thing.
 			//if (no obsticle in the way) {
 				
-				if (dl > 5) {
-					setShipAsTarget(10, this.enemyBody);
-				} else {
-					setShipAsTarget(0, this.enemyBody);
-				}
+				//if (dl > 5) {
+					setShipAsTarget(4, this.enemyBody);
+				//} else {
+					//setShipAsTarget(0, this.enemyBody);
+				//}
 				
 			// } else {
 				// avoid
