@@ -85,9 +85,8 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	@Override
 	public void engage() {
 		super.engage();
-		//TODO: remove bug: ship disappears  when 0 and 0
-		this.targetPosX = 0;//this.body.getPositionX();
-		this.targetPosY = 2;//this.body.getPositionY();
+		this.targetPosX = this.body.getPositionX();
+		this.targetPosY = this.body.getPositionY();
 		this.thrustPid = new PidController(0.03, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
 		this.anglePid = new PidController(2.50, 0.20, 0.0);
@@ -165,9 +164,8 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	}
 
 	private void updateAngle() {
-		//TODO: remove bug: ship disappears  when 0 and 0
 		double dx = 0;
-		double dy = 2;
+		double dy = 0;
 		if (this.flowfield != null) {
 			dx = this.flowfield.getFlowX(
 					this.body.getPositionX(), 
@@ -175,6 +173,12 @@ public class OperationalAIComponent extends UpdateableComponent implements
 			dy = this.flowfield.getFlowY(
 					this.body.getPositionX(), 
 					this.body.getPositionY());
+		}
+		
+		if (dx == 0 && dy == 0) {
+			this.anglePid.update(0, this.timer.getDeltaTime());
+			this.hPos = -this.anglePid.getOutput();
+			return;
 		}
 		
 		double txr = dx * Math.cos(-this.body.getAngularPosition()) - dy * Math.sin(-this.body.getAngularPosition());
