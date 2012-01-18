@@ -82,6 +82,12 @@ public class CruiseComponent extends UpdateableComponent {
 		// calculate interception point
 		double dx = this.target.getPositionX() - this.body.getPositionX();
 		double dy = this.target.getPositionY() - this.body.getPositionY();
+		
+		if (dx == 0 && dy == 0) {
+			this.body.setSpeed(this.speed);
+			return;
+		}
+		
 		double dl = Math.sqrt(dx * dx + dy * dy);
 		double vrx = this.target.getVelocityX() - this.body.getVelocityX();
 		double vry = this.target.getVelocityY() - this.body.getVelocityY();
