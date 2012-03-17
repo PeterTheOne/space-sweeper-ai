@@ -112,13 +112,9 @@ public class FlowField implements Engageable {
 			if (pose2D != null) {
 				double sigma = 2;
 				double gaussRadius = (int) Math.ceil(sigma * 3.0f);
-				//double gaussRadiusHalf = gaussRadius / 2d;
 
-				// TODO: fix stuff...
 				int startX = (int) Math.floor((pose2D.getPosX() + this.worldWidthHalf  - gaussRadius + worldWidth) % Math.floor(worldWidth));
-				int endX = (int) Math.floor((pose2D.getPosX() + this.worldWidthHalf + gaussRadius + worldWidth) % Math.floor(worldWidth));
 				int startY = (int) Math.floor((pose2D.getPosY() + this.worldHeightHalf  - gaussRadius + worldHeight) % Math.floor(worldHeight));
-				int endY = (int) Math.floor((pose2D.getPosY() + this.worldHeightHalf  + gaussRadius + worldHeight) % Math.floor(worldHeight));
 				for (int u = 0, x = startX; u < 2 * gaussRadius; u++, x++, x %= Math.floor(worldWidth)) {
 					for (int v = 0, y = startY; v < 2 * gaussRadius; v++, y++, y %= Math.floor(worldHeight)) {
 						// TODO: find shortest path, see: OperationalAIComponent
