@@ -167,12 +167,11 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		double dx = 0;
 		double dy = 0;
 		if (this.flowfield != null) {
-			dx = this.flowfield.getFlowX(
+			this.flowfield.calculateFlow(
 					this.body.getPositionX(), 
 					this.body.getPositionY());
-			dy = this.flowfield.getFlowY(
-					this.body.getPositionX(), 
-					this.body.getPositionY());
+			dx = this.flowfield.getFlowX();
+			dy = this.flowfield.getFlowY();
 		}
 		
 		if (dx == 0 && dy == 0) {
