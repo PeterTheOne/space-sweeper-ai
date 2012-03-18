@@ -223,7 +223,7 @@ public class PlayView extends View implements EventListener {
 		setupCamera();
 		setupBackgroundSprite();
 				
-		this.gameHud.engage();
+		//this.gameHud.engage();
 		this.miniMap.engage();
 		this.messageHud.engage();
 		this.viewLogic.engage();
