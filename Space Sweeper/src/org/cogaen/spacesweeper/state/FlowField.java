@@ -60,7 +60,8 @@ public class FlowField implements Engageable {
 		this.worldWidthHalf = this.worldWidth / 2d;
 		this.worldHeightHalf = this.worldHeight / 2d;
 
-		this.field = new double[(int) this.worldWidth][(int) this.worldHeight][2];
+		this.field = new double[(int) Math.floor(this.worldWidth)]
+		                        [(int) Math.floor(this.worldHeight)][2];
 		clearField();
 
 		this.engaged = true;
@@ -151,10 +152,10 @@ public class FlowField implements Engageable {
 		double tx = x - Math.floor(x);
 		double ty = y - Math.floor(y);
 
-		int x0 = (int) (Math.floor(x + worldWidth)			% worldWidth);
-		int x1 = (int) (Math.floor(x + worldWidth + 1)		% worldWidth);
-		int y0 = (int) (Math.floor(y + worldWidth)			% worldHeight);
-		int y1 = (int) (Math.floor(y + worldWidth + 1)		% worldHeight);
+		int x0 = (int) (Math.floor(x + worldWidth)			% Math.floor(worldWidth));
+		int x1 = (int) (Math.floor(x + worldWidth + 1)		% Math.floor(worldWidth));
+		int y0 = (int) (Math.floor(y + worldHeight)			% Math.floor(worldHeight));
+		int y1 = (int) (Math.floor(y + worldHeight + 1)		% Math.floor(worldHeight));
 
 		double P0x = this.field[x0][y0][0];
 		double P0y = this.field[x0][y0][1];

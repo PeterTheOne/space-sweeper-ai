@@ -63,7 +63,6 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private PidController anglePid;
 	private Timer timer;
 	
-	//TODO: get these from level..
 	private double worldWidth;
 	private double worldHeight;
 	private FlowField flowfield;
@@ -89,7 +88,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		this.targetPosY = this.body.getPositionY();
 		this.thrustPid = new PidController(0.03, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
-		this.anglePid = new PidController(2.50, 0.20, 0.0);
+		this.anglePid = new PidController(2.50, 0.0, 0.0);
 		this.anglePid.setTarget(0);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
 		this.worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
@@ -164,6 +163,8 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	}
 
 	private void updateAngle() {
+		//double dx = this.targetPosX - this.body.getPositionX();
+		//double dy = this.targetPosY - this.body.getPositionY();
 		double dx = 0;
 		double dy = 0;
 		if (this.flowfield != null) {
@@ -185,7 +186,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 
 		double l = Math.sqrt(txr * txr + tyr * tyr);
 		txr /= l;
-		tyr /= l;
+		//tyr /= l;	// not used..
 		
 		this.anglePid.update(txr, this.timer.getDeltaTime());
 		
