@@ -50,6 +50,8 @@ import org.cogaen.time.Timer;
 
 public class OperationalAIComponent extends UpdateableComponent implements 
 		ControllerState, OperationalAIInterface, EventListener {
+	
+	private static final boolean FOLLOW = false;
 
 	private double hPos;
 	private double vPos;
@@ -163,17 +165,22 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	}
 
 	private void updateAngle() {
-		//double dx = this.targetPosX - this.body.getPositionX();
-		//double dy = this.targetPosY - this.body.getPositionY();
 		double dx = 0;
 		double dy = 0;
-		if (this.flowfield != null) {
-			this.flowfield.calculateFlow(
-					this.body.getPositionX(), 
-					this.body.getPositionY());
-			dx = this.flowfield.getFlowX();
-			dy = this.flowfield.getFlowY();
+		
+		if (FOLLOW) {
+			dx = this.targetPosX - this.body.getPositionX();
+			dy = this.targetPosY - this.body.getPositionY();
+		} else {
+			if (this.flowfield != null) {
+				this.flowfield.calculateFlow(
+						this.body.getPositionX(), 
+						this.body.getPositionY());
+				dx = this.flowfield.getFlowX();
+				dy = this.flowfield.getFlowY();
+			}
 		}
+		
 		
 		if (dx == 0 && dy == 0) {
 			this.anglePid.update(0, this.timer.getDeltaTime());
