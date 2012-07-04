@@ -4,6 +4,7 @@ import org.cogaen.core.Core;
 import org.cogaen.entity.Entity;
 import org.cogaen.entity.EntityService;
 import org.cogaen.event.Event;
+import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.spacesweeper.component.OperationalAIComponent;
 import org.cogaen.spacesweeper.component.CannonComponent;
@@ -44,7 +45,7 @@ public class AIShipEntity extends PhysicsEntity {
 		addComponent(new RocketLauncherComponent(ROCKET_BUTTON, PhysicsEntity.BodyAttrId));
 		
 		this.body = (Body) getAttribute(PhysicsEntity.BodyAttrId);
-		this.body.setCollisionFlag(0x0001);
+		this.body.setCollisionFlag(0x0000);
 		this.shieldState = (ShieldState) getAttribute(ShieldState.ATTR_ID);
 		
 		this.invulnerable = (Invulnerable) getAttribute(Invulnerable.ATTR_ID);

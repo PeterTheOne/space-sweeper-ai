@@ -34,12 +34,15 @@ import org.cogaen.entity.ComponentEntity;
 import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
+import org.cogaen.event.EventService;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
 import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.spacesweeper.entity.OperationalAIInterface;
+import org.cogaen.spacesweeper.event.FlowFieldUpdatedEvent;
 import org.cogaen.spacesweeper.physics.Body;
+import org.cogaen.spacesweeper.state.FlowField;
 import org.cogaen.spacesweeper.state.PlayState;
 import org.cogaen.spacesweeper.util.PidController;
 import org.cogaen.time.TimeService;
@@ -47,6 +50,8 @@ import org.cogaen.time.Timer;
 
 public class OperationalAIComponent extends UpdateableComponent implements 
 		ControllerState, OperationalAIInterface, EventListener {
+	
+	private static final boolean FOLLOW = false;
 
 	private double hPos;
 	private double vPos;
@@ -60,9 +65,9 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private PidController anglePid;
 	private Timer timer;
 	
-	//TODO: get these from level..
 	private double worldWidth;
 	private double worldHeight;
+	private FlowField flowfield;
 	
 	public OperationalAIComponent(int nButtons, CogaenId bodyAttrId) {
 		super();
@@ -85,16 +90,20 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		this.targetPosY = this.body.getPositionY();
 		this.thrustPid = new PidController(0.03, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
-		this.anglePid = new PidController(2.50, 0.20, 0.0);
+		this.anglePid = new PidController(2.50, 0.0, 0.0);
 		this.anglePid.setTarget(0);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
 		this.worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
 		double ar = SceneService.getInstance(getCore()).getAspectRatio();
 		this.worldHeight = worldWidth / ar;
+		EventService evntSrv = EventService.getInstance(getCore());
+		evntSrv.addListener(this, FlowFieldUpdatedEvent.TYPE_ID);
 	}
 
 	@Override
 	public void disengage() {
+		EventService evntSrv = EventService.getInstance(getCore());
+		evntSrv.removeListener(this);
 		super.disengage();
 	}
 
@@ -151,13 +160,27 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		
 		LoggingService log = LoggingService.getInstance(getCore());
 		
-		log.logInfo("AIComp", "speed: " + speed);
-		log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
+		//log.logInfo("AIComp", "speed: " + speed);
+		//log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
 	}
 
 	private void updateAngle() {
-		double dx = this.targetPosX - this.body.getPositionX();
-		double dy = this.targetPosY - this.body.getPositionY();
+		double dx = 0;
+		double dy = 0;
+		
+		if (FOLLOW) {
+			dx = this.targetPosX - this.body.getPositionX();
+			dy = this.targetPosY - this.body.getPositionY();
+		} else {
+			if (this.flowfield != null) {
+				this.flowfield.calculateFlow(
+						this.body.getPositionX(), 
+						this.body.getPositionY());
+				dx = this.flowfield.getFlowX();
+				dy = this.flowfield.getFlowY();
+			}
+		}
+		
 		
 		if (dx == 0 && dy == 0) {
 			this.anglePid.update(0, this.timer.getDeltaTime());
@@ -170,7 +193,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 
 		double l = Math.sqrt(txr * txr + tyr * tyr);
 		txr /= l;
-		tyr /= l;
+		//tyr /= l;	// not used..
 		
 		this.anglePid.update(txr, this.timer.getDeltaTime());
 		
@@ -179,9 +202,15 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	
 	@Override
 	public void handleEvent(Event event) {
-		//empty
+		if (event.isOfType(FlowFieldUpdatedEvent.TYPE_ID)) {
+			handleFlowFieldUpdatedEvent((FlowFieldUpdatedEvent) event);
+		}
 	}
 	
+	private void handleFlowFieldUpdatedEvent(FlowFieldUpdatedEvent event) {
+		this.flowfield = event.getFlowField();
+	}
+
 	public double getVerticalPosition() {
 		return this.vPos;
 	}

@@ -26,6 +26,7 @@ public class PlayState extends BasicState implements EventListener {
 	private PlayView playView;
 	private LoadingView loadingView;
 	private GameLogic logic;
+	private FlowField flowField;
 	private ResourceService resSrv;
 	private boolean loaded;
 	
@@ -34,6 +35,7 @@ public class PlayState extends BasicState implements EventListener {
 		this.playView = new PlayView(core);
 		this.loadingView = new LoadingView(core);
 		this.logic = new GameLogic(core);
+		this.flowField = new FlowField(core);
 		
 		this.resSrv = ResourceService.getInstance(core);
 		this.resSrv.createGroup(ID);
@@ -55,6 +57,7 @@ public class PlayState extends BasicState implements EventListener {
 		this.loadingView.disengage();
 		this.playView.engage();
 		this.logic.engage();
+		this.flowField.engage();
 		
 		PropertyService propSrv = PropertyService.getInstance(getCore());
 		double worldWidth = propSrv.getDoubleProperty(WORLD_WIDTH_PROP);
@@ -79,6 +82,10 @@ public class PlayState extends BasicState implements EventListener {
 
 		if (this.playView.isEngaged()) {
 			this.playView.disengage();
+		}
+		
+		if (this.flowField.isEngaged()) {
+			this.flowField.disengage();
 		}
 		ResourceService.getInstance(getCore()).unloadGroup(ID);
 	}
