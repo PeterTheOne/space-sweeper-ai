@@ -35,12 +35,15 @@ import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
+import org.cogaen.event.SimpleEvent;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
 import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
+import org.cogaen.spacesweeper.PositionHelper;
 import org.cogaen.spacesweeper.entity.OperationalAIInterface;
 import org.cogaen.spacesweeper.event.FlowFieldUpdatedEvent;
+import org.cogaen.spacesweeper.event.TargetChangeEvent;
 import org.cogaen.spacesweeper.physics.Body;
 import org.cogaen.spacesweeper.state.FlowField;
 import org.cogaen.spacesweeper.state.PlayState;
@@ -51,7 +54,7 @@ import org.cogaen.time.Timer;
 public class OperationalAIComponent extends UpdateableComponent implements 
 		ControllerState, OperationalAIInterface, EventListener {
 	
-	private static final boolean FOLLOW = false;
+	private static final boolean FOLLOW = true;
 
 	private double hPos;
 	private double vPos;
@@ -65,8 +68,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private PidController anglePid;
 	private Timer timer;
 	
-	private double worldWidth;
-	private double worldHeight;
+	private PositionHelper positionHelper;
 	private FlowField flowfield;
 	
 	public OperationalAIComponent(int nButtons, CogaenId bodyAttrId) {
@@ -93,9 +95,10 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		this.anglePid = new PidController(2.50, 0.0, 0.0);
 		this.anglePid.setTarget(0);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
-		this.worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
-		double ar = SceneService.getInstance(getCore()).getAspectRatio();
-		this.worldHeight = worldWidth / ar;
+		double worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
+ 		double ar = SceneService.getInstance(getCore()).getAspectRatio();
+		double worldHeight = worldWidth / ar;
+		this.positionHelper = new PositionHelper(worldWidth, worldHeight);
 		EventService evntSrv = EventService.getInstance(getCore());
 		evntSrv.addListener(this, FlowFieldUpdatedEvent.TYPE_ID);
 	}
@@ -109,59 +112,18 @@ public class OperationalAIComponent extends UpdateableComponent implements
 
 	@Override
 	public void update() {
-		calculateShortestWay();
 		updateThrust();
 		updateAngle();
-
-		this.vPos = this.vPos > 1 ? 1 : this.vPos;
-		this.vPos = this.vPos < 0 ? 0 : this.vPos;
-		this.hPos = this.hPos > 1 ? 1 : this.hPos;
-		this.hPos = this.hPos < -1 ? -1 : this.hPos;
-	}
-	
-	private void calculateShortestWay() {
-		if (this.body.getPositionX() > 0 && this.targetPosX < 0) {
-			double altTargetPosX = this.targetPosX + worldWidth;
-			if (Math.abs(altTargetPosX - this.body.getPositionX()) < 
-					Math.abs(this.targetPosX - this.body.getPositionX())) {
-				this.targetPosX = altTargetPosX;
-			}
-		} else if (this.body.getPositionX() < 0 && this.targetPosX > 0) {
-			double altTargetPosX = this.targetPosX - worldWidth;
-			if (Math.abs(altTargetPosX - this.body.getPositionX()) < 
-					Math.abs(this.targetPosX - this.body.getPositionX())) {
-				this.targetPosX = altTargetPosX;
-			}
-		}
-		
-		if (this.body.getPositionY() > 0 && this.targetPosY < 0) {
-			double altTargetPosY = this.targetPosY + worldHeight;
-			double altDist = Math.abs(altTargetPosY - this.body.getPositionY());
-			double dist = Math.abs(this.targetPosY - this.body.getPositionY());
-			if (altDist < dist) {
-				this.targetPosY = altTargetPosY;
-			}
-		} else if (this.body.getPositionY() < 0 && this.targetPosY > 0) {
-			double altTargetPosY = this.targetPosY - worldHeight;
-			double altDist = Math.abs(altTargetPosY - this.body.getPositionY());
-			double dist = Math.abs(this.targetPosY - this.body.getPositionY());
-			if (altDist < dist) {
-				this.targetPosY = altTargetPosY;
-			}
-		}
 	}
 
 	private void updateThrust() {
-		
 		double speed = this.body.getSpeed();
 		this.thrustPid.update(speed, this.timer.getDeltaTime());
 
-		this.vPos = this.thrustPid.getOutput();
-		
-		LoggingService log = LoggingService.getInstance(getCore());
-		
-		//log.logInfo("AIComp", "speed: " + speed);
-		//log.logInfo("AIComp", "pidOut: " + this.thrustPid.getOutput());
+		double vPos = this.thrustPid.getOutput();
+
+		this.vPos = vPos > 1 ? 1 : vPos;
+		this.vPos = vPos < 0 ? 0 : vPos;
 	}
 
 	private void updateAngle() {
@@ -181,7 +143,6 @@ public class OperationalAIComponent extends UpdateableComponent implements
 			}
 		}
 		
-		
 		if (dx == 0 && dy == 0) {
 			this.anglePid.update(0, this.timer.getDeltaTime());
 			this.hPos = -this.anglePid.getOutput();
@@ -193,11 +154,14 @@ public class OperationalAIComponent extends UpdateableComponent implements
 
 		double l = Math.sqrt(txr * txr + tyr * tyr);
 		txr /= l;
-		//tyr /= l;	// not used..
 		
 		this.anglePid.update(txr, this.timer.getDeltaTime());
 		
-		this.hPos = -this.anglePid.getOutput();
+		
+		double hPos = -this.anglePid.getOutput();
+		
+		this.hPos = hPos > 1 ? 1 : hPos;
+		this.hPos = hPos < -1 ? -1 : hPos;
 	}
 	
 	@Override
@@ -225,8 +189,14 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	
 	@Override
 	public void setTarget(double targetPosX, double targetPosY) {
-		this.targetPosX = targetPosX;
-		this.targetPosY = targetPosY;
+		this.positionHelper.setTarget(this.body.getPositionX(), this.body.getPositionY(), 
+				targetPosX, targetPosY);
+		this.targetPosX = this.positionHelper.getTargetX();
+		this.targetPosY = this.positionHelper.getTargetY();
+		
+		Event event = new TargetChangeEvent(this.body.getPositionX(), 
+				this.body.getPositionY(), this.targetPosX, this.targetPosY);
+		EventService.getInstance(getCore()).dispatchEvent(event);
 	}
 	
 	@Override

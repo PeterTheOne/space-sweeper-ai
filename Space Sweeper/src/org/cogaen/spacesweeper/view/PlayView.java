@@ -50,6 +50,7 @@ import org.cogaen.spacesweeper.hud.GameHud;
 import org.cogaen.spacesweeper.hud.MessageHud;
 import org.cogaen.spacesweeper.hud.MiniMapHud;
 import org.cogaen.spacesweeper.physics.PositionUpdateEvent;
+import org.cogaen.spacesweeper.representation.AIShipRepresentation;
 import org.cogaen.spacesweeper.representation.BaseRepresentation;
 import org.cogaen.spacesweeper.representation.BigAsteroidRepresentation;
 import org.cogaen.spacesweeper.representation.BulletRepresentation;
@@ -572,7 +573,7 @@ public class PlayView extends View implements EventListener {
 			addRepresentation(spawn.getEntityId(), er);
 			er.setPose(spawn.getPosX(), spawn.getPosY(), spawn.getAngle());
 		} else if (spawn.isEntityType(AIShipEntity.TYPE)) {
-			ShipRepresentation er = new ShipRepresentation(getCore(), spawn.getEntityId());
+			AIShipRepresentation er = new AIShipRepresentation(getCore(), spawn.getEntityId(), this);
 			addRepresentation(spawn.getEntityId(), er);
 			er.setPose(spawn.getPosX(), spawn.getPosY(), spawn.getAngle());
 		} else if (spawn.isEntityType(BigAsteroid.TYPE)) {
