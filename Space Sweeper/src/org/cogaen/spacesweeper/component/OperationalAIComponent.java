@@ -162,4 +162,9 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	public void setTargetSpeed(double targetSpeed) {
 		this.thrustPid.setTarget(targetSpeed);
 	}
+
+	@Override
+	public void setShoot(boolean shoot) {
+		this.buttons[0] = true;
+	}
 }

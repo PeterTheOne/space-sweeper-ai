@@ -11,4 +11,6 @@ public interface OperationalAIInterface {
 	public void setTarget(double targetPosX, double targetPosY);
 
 	public void setTargetSpeed(double speed);
+
+	public void setShoot(boolean shoot);
 }

@@ -114,16 +114,15 @@ public class TacticalAIComponent extends UpdateableComponent {
 		double dy = targetPosY - this.body.getPositionY();
 		double dl = Math.sqrt(dx * dx + dy * dy);
 		double speed = dl / 1.5d;
+		this.opAI.setTargetSpeed(speed);
 		
-		LoggingService log = LoggingService.getInstance(getCore());
-		log.logInfo("TacAIComp", "speed: " + speed);
+		//LoggingService log = LoggingService.getInstance(getCore());
+		//log.logInfo("TacAIComp", "speed: " + speed);
+		
+		// shoot
+		this.opAI.setShoot(true);
 		
 		// set move command
-		moveCommand(speed, targetPosX, targetPosY);
-	}
-	
-	private void moveCommand(double speed, double targetPosX, double targetPosY) {
-		this.opAI.setTargetSpeed(speed);
 		this.opAI.setTarget(targetPosX, targetPosY);
 	}
 	
