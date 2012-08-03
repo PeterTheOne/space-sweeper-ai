@@ -53,8 +53,6 @@ import org.cogaen.time.Timer;
 
 public class OperationalAIComponent extends UpdateableComponent implements 
 		ControllerState, OperationalAIInterface, EventListener {
-	
-	private static final boolean FOLLOW = true;
 
 	private double hPos;
 	private double vPos;
@@ -130,17 +128,23 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		double dx = 0;
 		double dy = 0;
 		
-		if (FOLLOW) {
+		// get flow field vector
+		if (this.flowfield != null) {
+			this.flowfield.calculateFlow(
+					this.body.getPositionX(), 
+					this.body.getPositionY());
+			dx = this.flowfield.getFlowX();
+			dy = this.flowfield.getFlowY();
+		}
+		
+		// calculate if ship needs to avoid an obstacle!
+		// todo: this should be done one ai level higher
+		if (dx * dx + dy * dy <= 0.0001) {
+			LoggingService log = LoggingService.getInstance(getCore());
+			log.logInfo("OpAIComp", "bla: " + (dx * dx + dy * dy));
+			// set follow
 			dx = this.targetPosX - this.body.getPositionX();
 			dy = this.targetPosY - this.body.getPositionY();
-		} else {
-			if (this.flowfield != null) {
-				this.flowfield.calculateFlow(
-						this.body.getPositionX(), 
-						this.body.getPositionY());
-				dx = this.flowfield.getFlowX();
-				dy = this.flowfield.getFlowY();
-			}
 		}
 		
 		if (dx == 0 && dy == 0) {
