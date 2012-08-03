@@ -3,11 +3,19 @@ package org.cogaen.spacesweeper.component;
 import org.cogaen.entity.ComponentEntity;
 import org.cogaen.entity.EntityService;
 import org.cogaen.entity.UpdateableComponent;
+import org.cogaen.event.Event;
+import org.cogaen.event.EventService;
+import org.cogaen.logging.LoggingService;
+import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
+import org.cogaen.spacesweeper.PositionHelper;
 import org.cogaen.spacesweeper.entity.OperationalAIInterface;
 import org.cogaen.spacesweeper.entity.ShipEntity;
+import org.cogaen.spacesweeper.event.FlowFieldUpdatedEvent;
 import org.cogaen.spacesweeper.physics.Body;
+import org.cogaen.spacesweeper.state.FlowField;
 import org.cogaen.spacesweeper.state.GameLogic;
+import org.cogaen.spacesweeper.state.PlayState;
 import org.cogaen.spacesweeper.tactic.HuntState;
 import org.cogaen.state.DeterministicStateMachine;
 
@@ -18,6 +26,9 @@ public class TacticalAIComponent extends UpdateableComponent {
 	private Body enemyBody;
 	private OperationalAIInterface opAI;
 	private DeterministicStateMachine stateMachine;
+	
+	private PositionHelper positionHelper;
+	private FlowField flowfield;
 	
 	public TacticalAIComponent(CogaenId bodyAttrId) {
 		super();
@@ -42,6 +53,12 @@ public class TacticalAIComponent extends UpdateableComponent {
 		this.stateMachine.addState(new HuntState(), HuntState.ID);
 		this.stateMachine.setStartState(HuntState.ID);
 		this.stateMachine.engage();
+		double worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
+ 		double ar = SceneService.getInstance(getCore()).getAspectRatio();
+		double worldHeight = worldWidth / ar;
+		this.positionHelper = new PositionHelper(worldWidth, worldHeight);
+		EventService evntSrv = EventService.getInstance(getCore());
+		evntSrv.addListener(this, FlowFieldUpdatedEvent.TYPE_ID);
 	}
 	
 	@Override
@@ -49,41 +66,55 @@ public class TacticalAIComponent extends UpdateableComponent {
 		this.stateMachine.disengage();
 		super.disengage();
 	}
+	
+	@Override
+	public void handleEvent(Event event) {
+		if (event.isOfType(FlowFieldUpdatedEvent.TYPE_ID)) {
+			handleFlowFieldUpdatedEvent((FlowFieldUpdatedEvent) event);
+		}
+	}
+	
+	private void handleFlowFieldUpdatedEvent(FlowFieldUpdatedEvent event) {
+		this.flowfield = event.getFlowField();
+	}
 
 	@Override
 	public void update() {		
 		//TODO: check state, create updateMethod for every State, avoid Objects	
 		
-		if (this.stateMachine.getCurrentState().equals(HuntState.ID)) {
-			double dx = this.enemyBody.getPositionX() - this.body.getPositionX();
-			double dy = this.enemyBody.getPositionY() - this.body.getPositionY();
-			double dl = Math.sqrt(dx * dx + dy * dy);
-			
-			//TODO: this is for line of sight thing.
-			//if (no obsticle in the way) {
-				
-				//if (dl > 5) {
-					setShipAsTarget(4, this.enemyBody);
-				//} else {
-					//setShipAsTarget(0, this.enemyBody);
-				//}
-				
-			// } else {
-				// avoid
-				//setShipAsTarget();
-			// }
-			
-			// TODO:
-			// if (enemy in front) {
-					// shoot
-			// }
-		}
+		//if (this.stateMachine.getCurrentState().equals(HuntState.ID)) {
+			huntUpdate();
+		//}
 	}
 	
-	private void setShipAsTarget(double speed, Body targetBody) {
+	private void huntUpdate() {
+		// world Wrap
+		this.positionHelper.setTarget(this.body.getPositionX(), this.body.getPositionY(), 
+				this.enemyBody.getPositionX(), this.enemyBody.getPositionY());
+		double targetPosX = this.positionHelper.getTargetX();
+		double targetPosY = this.positionHelper.getTargetY();
+
+		// add flowfield avoidance to target position
+		double ffX = 0;
+		double ffY = 0;
+		double ffFactor = 40.0;
+		// get flow field vector
+		if (this.flowfield != null) {
+			this.flowfield.calculateFlow(
+					this.body.getPositionX(), 
+					this.body.getPositionY());
+			ffX = this.flowfield.getFlowX() * ffFactor;
+			ffY = this.flowfield.getFlowY() * ffFactor;
+		}
+		targetPosX += ffX;
+		targetPosY += ffY;
+		
+		// set move command
+		moveCommand(6, targetPosX, targetPosY);
+	}
+	
+	private void moveCommand(double speed, double targetPosX, double targetPosY) {
 		this.opAI.setTargetSpeed(speed);
-		double targetPosX = targetBody.getPositionX();
-		double targetPosY = targetBody.getPositionY();
 		this.opAI.setTarget(targetPosX, targetPosY);
 	}
 	

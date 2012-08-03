@@ -35,18 +35,12 @@ import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
-import org.cogaen.event.SimpleEvent;
-import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
-import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
-import org.cogaen.spacesweeper.PositionHelper;
 import org.cogaen.spacesweeper.entity.OperationalAIInterface;
 import org.cogaen.spacesweeper.event.FlowFieldUpdatedEvent;
 import org.cogaen.spacesweeper.event.TargetChangeEvent;
 import org.cogaen.spacesweeper.physics.Body;
-import org.cogaen.spacesweeper.state.FlowField;
-import org.cogaen.spacesweeper.state.PlayState;
 import org.cogaen.spacesweeper.util.PidController;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
@@ -65,9 +59,6 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private PidController thrustPid;
 	private PidController anglePid;
 	private Timer timer;
-	
-	private PositionHelper positionHelper;
-	private FlowField flowfield;
 	
 	public OperationalAIComponent(int nButtons, CogaenId bodyAttrId) {
 		super();
@@ -93,12 +84,6 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		this.anglePid = new PidController(2.50, 0.0, 0.0);
 		this.anglePid.setTarget(0);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
-		double worldWidth = PlayState.DEFAULT_WORLD_WIDTH;
- 		double ar = SceneService.getInstance(getCore()).getAspectRatio();
-		double worldHeight = worldWidth / ar;
-		this.positionHelper = new PositionHelper(worldWidth, worldHeight);
-		EventService evntSrv = EventService.getInstance(getCore());
-		evntSrv.addListener(this, FlowFieldUpdatedEvent.TYPE_ID);
 	}
 
 	@Override
@@ -121,31 +106,15 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		double vPos = this.thrustPid.getOutput();
 
 		this.vPos = vPos > 1 ? 1 : vPos;
-		this.vPos = vPos < 0 ? 0 : vPos;
+		this.vPos = this.vPos < 0 ? 0 : this.vPos;
 	}
 
 	private void updateAngle() {
 		double dx = 0;
 		double dy = 0;
 		
-		// get flow field vector
-		if (this.flowfield != null) {
-			this.flowfield.calculateFlow(
-					this.body.getPositionX(), 
-					this.body.getPositionY());
-			dx = this.flowfield.getFlowX();
-			dy = this.flowfield.getFlowY();
-		}
-		
-		// calculate if ship needs to avoid an obstacle!
-		// todo: this should be done one ai level higher
-		if (dx * dx + dy * dy <= 0.0001) {
-			LoggingService log = LoggingService.getInstance(getCore());
-			log.logInfo("OpAIComp", "bla: " + (dx * dx + dy * dy));
-			// set follow
-			dx = this.targetPosX - this.body.getPositionX();
-			dy = this.targetPosY - this.body.getPositionY();
-		}
+		dx = this.targetPosX - this.body.getPositionX();
+		dy = this.targetPosY - this.body.getPositionY();
 		
 		if (dx == 0 && dy == 0) {
 			this.anglePid.update(0, this.timer.getDeltaTime());
@@ -167,17 +136,6 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		this.hPos = hPos > 1 ? 1 : hPos;
 		this.hPos = hPos < -1 ? -1 : hPos;
 	}
-	
-	@Override
-	public void handleEvent(Event event) {
-		if (event.isOfType(FlowFieldUpdatedEvent.TYPE_ID)) {
-			handleFlowFieldUpdatedEvent((FlowFieldUpdatedEvent) event);
-		}
-	}
-	
-	private void handleFlowFieldUpdatedEvent(FlowFieldUpdatedEvent event) {
-		this.flowfield = event.getFlowField();
-	}
 
 	public double getVerticalPosition() {
 		return this.vPos;
@@ -193,11 +151,8 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	
 	@Override
 	public void setTarget(double targetPosX, double targetPosY) {
-		this.positionHelper.setTarget(this.body.getPositionX(), this.body.getPositionY(), 
-				targetPosX, targetPosY);
-		this.targetPosX = this.positionHelper.getTargetX();
-		this.targetPosY = this.positionHelper.getTargetY();
-		
+		this.targetPosX = targetPosX;
+		this.targetPosY = targetPosY;
 		Event event = new TargetChangeEvent(this.body.getPositionX(), 
 				this.body.getPositionY(), this.targetPosX, this.targetPosY);
 		EventService.getInstance(getCore()).dispatchEvent(event);
