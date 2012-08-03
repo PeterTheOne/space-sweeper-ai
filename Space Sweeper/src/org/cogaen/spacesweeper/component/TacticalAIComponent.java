@@ -97,7 +97,7 @@ public class TacticalAIComponent extends UpdateableComponent {
 		// add flowfield avoidance to target position
 		double ffX = 0;
 		double ffY = 0;
-		double ffFactor = 40.0;
+		double ffFactor = 30.0;
 		// get flow field vector
 		if (this.flowfield != null) {
 			this.flowfield.calculateFlow(
@@ -109,8 +109,17 @@ public class TacticalAIComponent extends UpdateableComponent {
 		targetPosX += ffX;
 		targetPosY += ffY;
 		
+		// calculate speed
+		double dx = targetPosX - this.body.getPositionX();
+		double dy = targetPosY - this.body.getPositionY();
+		double dl = Math.sqrt(dx * dx + dy * dy);
+		double speed = dl / 1.5d;
+		
+		LoggingService log = LoggingService.getInstance(getCore());
+		log.logInfo("TacAIComp", "speed: " + speed);
+		
 		// set move command
-		moveCommand(6, targetPosX, targetPosY);
+		moveCommand(speed, targetPosX, targetPosY);
 	}
 	
 	private void moveCommand(double speed, double targetPosX, double targetPosY) {
