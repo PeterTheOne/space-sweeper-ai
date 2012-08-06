@@ -61,7 +61,7 @@ public class FlowField implements Engageable {
 		this.worldHeightHalf = this.worldHeight / 2d;
 
 		this.field = new double[(int) Math.floor(this.worldWidth)]
-		                        [(int) Math.floor(this.worldHeight)][2];
+		                        [(int) Math.floor(this.worldHeight)][3];
 		clearField();
 
 		this.engaged = true;
@@ -74,6 +74,7 @@ public class FlowField implements Engageable {
 			for (int y = 0; y < (int) this.worldHeight; y++) {
 				this.field[x][y][0] = 0;
 				this.field[x][y][1] = 0;
+				this.field[x][y][2] = 0;
 			}
 		}
 	}
@@ -110,38 +111,67 @@ public class FlowField implements Engageable {
 				pose2D = (Pose2D) ast.getAttribute(Pose2D.ATTR_ID);
 			}
 			
-			if (pose2D != null) {
-				double sigma = 3;
-				double gaussRadius = (int) Math.ceil(sigma * 3.0f);
+			if (pose2D == null) {
+				continue;
+			}
+			
+			double sigma = 3;
+			double gaussRadius = (int) Math.ceil(sigma * 3.0f);
 
-				int startX = (int) Math.floor((pose2D.getPosX() + this.worldWidthHalf  - gaussRadius + worldWidth) % Math.floor(worldWidth));
-				int startY = (int) Math.floor((pose2D.getPosY() + this.worldHeightHalf  - gaussRadius + worldHeight) % Math.floor(worldHeight));
-				for (int u = 0, x = startX; u < 2 * gaussRadius; u++, x++, x %= Math.floor(worldWidth)) {
-					for (int v = 0, y = startY; v < 2 * gaussRadius; v++, y++, y %= Math.floor(worldHeight)) {
-						// TODO: find shortest path, see: OperationalAIComponent
-						double deltaX = x - pose2D.getPosX() - this.worldWidthHalf;
-						double deltaY = y - pose2D.getPosY() - this.worldHeightHalf;
-						double deltaLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-						
-						// normalize
-						if (deltaLength != 0) {
-							deltaX /= deltaLength;
-							deltaY /= deltaLength;
-						}
-						
-						// gauss
-						double dividend =  Math.pow(deltaLength, 2);
-						double divisor = (2 * Math.pow(sigma, 2));
-						double gauss = (float) Math.exp(- dividend / divisor);
-						deltaX *= gauss;
-						deltaY *= gauss;
-						
-						this.field[x][y][0] += deltaX;
-						this.field[x][y][1] += deltaY;
+			int startX = (int) Math.floor((pose2D.getPosX() + this.worldWidthHalf  - gaussRadius + worldWidth) % Math.floor(worldWidth));
+			int startY = (int) Math.floor((pose2D.getPosY() + this.worldHeightHalf  - gaussRadius + worldHeight) % Math.floor(worldHeight));
+			for (int u = 0, x = startX; u < 2 * gaussRadius; u++, x++, x %= Math.floor(worldWidth)) {
+				for (int v = 0, y = startY; v < 2 * gaussRadius; v++, y++, y %= Math.floor(worldHeight)) {
+					// TODO: find shortest path, see: OperationalAIComponent
+					double deltaX = x - pose2D.getPosX() - this.worldWidthHalf;
+					double deltaY = y - pose2D.getPosY() - this.worldHeightHalf;
+					double deltaLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+					
+					// normalize
+					if (deltaLength != 0) {
+						deltaX /= deltaLength;
+						deltaY /= deltaLength;
 					}
+					
+					// gauss
+					double dividend =  Math.pow(deltaLength, 2);
+					double divisor = (2 * Math.pow(sigma, 2));
+					double gauss = (float) Math.exp(- dividend / divisor);
+					deltaX *= gauss;
+					deltaY *= gauss;
+					
+					this.field[x][y][0] += deltaX;
+					this.field[x][y][1] += deltaY;
+					
+					// set length
+					double x2 = deltaX * deltaX;
+					double y2 = deltaY * deltaY;
+					double dl = Math.sqrt(x2 + y2);
+					this.field[x][y][2] = Math.max(this.field[x][y][2], dl);
 				}
 			}
 		}
+		
+		for (int x = 0; x < (int) this.worldWidth; x++) {
+			for (int y = 0; y < (int) this.worldHeight; y++) {
+
+				// normalize field
+				double x2 = this.field[x][y][0] * this.field[x][y][0];
+				double y2 = this.field[x][y][1] * this.field[x][y][1];
+				double dl = Math.sqrt(x2 + y2);
+				if (dl != 0) {
+					this.field[x][y][0] /= dl;
+					this.field[x][y][1] /= dl;
+				}
+				
+				// set length again (only to show the ff)
+				if (this.field[x][y][2] != 0) {
+					this.field[x][y][0] *= this.field[x][y][2];
+					this.field[x][y][1] *= this.field[x][y][2];
+				}
+			}
+		}
+		
 		this.evntSrv.dispatchEvent(new FlowFieldUpdatedEvent(this));
 	}
 	
@@ -173,6 +203,31 @@ public class FlowField implements Engageable {
 		double term1Y = (1 - tx) * P0y + tx * P1y;
 		double term2Y = (1 - tx) * P2y + tx * P3y;
 		this.resultY = (1 - ty) * term1Y + ty * term2Y;
+	}
+	
+	// todo: test this function
+	public double getFlowStrength(double x, double y) {
+		x += worldWidthHalf;
+		y += worldHeightHalf;
+		
+		double tx = x - Math.floor(x);
+		double ty = y - Math.floor(y);
+
+		int x0 = (int) (Math.floor(x + worldWidth)			% Math.floor(worldWidth));
+		int x1 = (int) (Math.floor(x + worldWidth + 1)		% Math.floor(worldWidth));
+		int y0 = (int) (Math.floor(y + worldHeight)			% Math.floor(worldHeight));
+		int y1 = (int) (Math.floor(y + worldHeight + 1)		% Math.floor(worldHeight));
+
+		double P0 = this.field[x0][y0][2];
+		double P1 = this.field[x1][y0][2];
+		double P2 = this.field[x0][y1][2];
+		double P3 = this.field[x1][y1][2];
+
+		double term1 = (1 - tx) * P0 + tx * P1;
+		double term2 = (1 - tx) * P2 + tx * P3;
+		double result = (1 - ty) * term1 + ty * term2;
+		
+		return result;
 	}
 
 	public double getFlowX() {
