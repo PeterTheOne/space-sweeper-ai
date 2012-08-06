@@ -10,6 +10,7 @@ import org.cogaen.event.SimpleEvent;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
+import org.cogaen.spacesweeper.PositionHelper;
 import org.cogaen.spacesweeper.entity.BigAsteroid;
 import org.cogaen.spacesweeper.entity.MediumAsteroid;
 import org.cogaen.spacesweeper.entity.Pose2D;
@@ -123,8 +124,18 @@ public class FlowField implements Engageable {
 			for (int u = 0, x = startX; u < 2 * gaussRadius; u++, x++, x %= Math.floor(worldWidth)) {
 				for (int v = 0, y = startY; v < 2 * gaussRadius; v++, y++, y %= Math.floor(worldHeight)) {
 					// TODO: find shortest path, see: OperationalAIComponent
-					double deltaX = x - pose2D.getPosX() - this.worldWidthHalf;
-					double deltaY = y - pose2D.getPosY() - this.worldHeightHalf;
+					PositionHelper posHelper = new PositionHelper(this.worldWidth, this.worldHeight);
+					posHelper.setTarget(
+							pose2D.getPosX(), 
+							pose2D.getPosY(), 
+							x - this.worldWidthHalf, 
+							y - this.worldHeightHalf
+					);
+					double newX = posHelper.getTargetX();
+					double newY = posHelper.getTargetY();
+					
+					double deltaX = newX - pose2D.getPosX();
+					double deltaY = newY - pose2D.getPosY();
 					double deltaLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 					
 					// normalize
