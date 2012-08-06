@@ -93,11 +93,16 @@ public class TacticalAIComponent extends UpdateableComponent {
 				this.enemyBody.getPositionX(), this.enemyBody.getPositionY());
 		double targetPosX = this.positionHelper.getTargetX();
 		double targetPosY = this.positionHelper.getTargetY();
+		
+		double dx = targetPosX - this.body.getPositionX();
+		double dy = targetPosY - this.body.getPositionY();
+		double dl = Math.sqrt(dx * dx + dy * dy);
 
 		// add flowfield avoidance to target position
 		double ffX = 0;
 		double ffY = 0;
-		double ffFactor = 30.0;
+		// should this be proportional to the distance to target...
+		double ffFactor = dl * 10;
 		// get flow field vector
 		if (this.flowfield != null) {
 			this.flowfield.calculateFlow(
@@ -110,9 +115,9 @@ public class TacticalAIComponent extends UpdateableComponent {
 		targetPosY += ffY;
 		
 		// calculate speed
-		double dx = targetPosX - this.body.getPositionX();
-		double dy = targetPosY - this.body.getPositionY();
-		double dl = Math.sqrt(dx * dx + dy * dy);
+		dx = targetPosX - this.body.getPositionX();
+		dy = targetPosY - this.body.getPositionY();
+		dl = Math.sqrt(dx * dx + dy * dy);
 		double speed = dl / 1.5d;
 		this.opAI.setTargetSpeed(speed);
 		
