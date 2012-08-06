@@ -102,7 +102,7 @@ public class TacticalAIComponent extends UpdateableComponent {
 		double ffX = 0;
 		double ffY = 0;
 		// should this be proportional to the distance to target...
-		double ffFactor = dl * 10;
+		double ffFactor = dl * 6;
 		// get flow field vector
 		if (this.flowfield != null) {
 			this.flowfield.calculateFlow(

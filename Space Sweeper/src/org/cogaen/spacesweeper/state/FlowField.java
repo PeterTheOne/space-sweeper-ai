@@ -133,38 +133,25 @@ public class FlowField implements Engageable {
 						deltaY /= deltaLength;
 					}
 					
-					// gauss
-					double dividend =  Math.pow(deltaLength, 2);
-					double divisor = (2 * Math.pow(sigma, 2));
-					double gauss = (float) Math.exp(- dividend / divisor);
-					deltaX *= gauss;
-					deltaY *= gauss;
-					
+					// set angle
 					this.field[x][y][0] += deltaX;
 					this.field[x][y][1] += deltaY;
 					
+					// gauss
+					double dividend =  Math.pow(deltaLength, 2);
+					double divisor = (2 * Math.pow(sigma, 2));
+					double gauss = Math.exp(- dividend / divisor);
+					
 					// set length
-					double x2 = deltaX * deltaX;
-					double y2 = deltaY * deltaY;
-					double dl = Math.sqrt(x2 + y2);
-					this.field[x][y][2] = Math.max(this.field[x][y][2], dl);
+					this.field[x][y][2] = Math.max(this.field[x][y][2], gauss);
 				}
 			}
 		}
-		
+
+		// set length again (only to show the ff)
+		// todo: remove this when ff view is disabled
 		for (int x = 0; x < (int) this.worldWidth; x++) {
 			for (int y = 0; y < (int) this.worldHeight; y++) {
-
-				// normalize field
-				double x2 = this.field[x][y][0] * this.field[x][y][0];
-				double y2 = this.field[x][y][1] * this.field[x][y][1];
-				double dl = Math.sqrt(x2 + y2);
-				if (dl != 0) {
-					this.field[x][y][0] /= dl;
-					this.field[x][y][1] /= dl;
-				}
-				
-				// set length again (only to show the ff)
 				if (this.field[x][y][2] != 0) {
 					this.field[x][y][0] *= this.field[x][y][2];
 					this.field[x][y][1] *= this.field[x][y][2];
