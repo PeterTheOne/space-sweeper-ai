@@ -62,7 +62,7 @@ public class FlowField implements Engageable {
 		this.worldHeightHalf = this.worldHeight / 2d;
 
 		this.field = new double[(int) Math.floor(this.worldWidth)]
-		                        [(int) Math.floor(this.worldHeight)][3];
+		                        [(int) Math.floor(this.worldHeight)][2];
 		clearField();
 
 		this.engaged = true;
@@ -75,7 +75,6 @@ public class FlowField implements Engageable {
 			for (int y = 0; y < (int) this.worldHeight; y++) {
 				this.field[x][y][0] = 0;
 				this.field[x][y][1] = 0;
-				this.field[x][y][2] = 0;
 			}
 		}
 	}
@@ -116,14 +115,14 @@ public class FlowField implements Engageable {
 				continue;
 			}
 			
-			double sigma = 2;
+			double sigma = 3;
 			double gaussRadius = (int) Math.ceil(sigma * 3.0f);
 
 			int startX = (int) Math.floor((pose2D.getPosX() + this.worldWidthHalf  - gaussRadius + worldWidth) % Math.floor(worldWidth));
 			int startY = (int) Math.floor((pose2D.getPosY() + this.worldHeightHalf  - gaussRadius + worldHeight) % Math.floor(worldHeight));
 			for (int u = 0, x = startX; u < 2 * gaussRadius; u++, x++, x %= Math.floor(worldWidth)) {
 				for (int v = 0, y = startY; v < 2 * gaussRadius; v++, y++, y %= Math.floor(worldHeight)) {
-					// TODO: find shortest path, see: OperationalAIComponent
+					// find shortest path with PositionHelper
 					PositionHelper posHelper = new PositionHelper(this.worldWidth, this.worldHeight);
 					posHelper.setTarget(
 							pose2D.getPosX(), 
@@ -138,38 +137,26 @@ public class FlowField implements Engageable {
 					double deltaY = newY - pose2D.getPosY();
 					double deltaLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 					
-					// set angle
-					this.field[x][y][0] += deltaX;
-					this.field[x][y][1] += deltaY;
-					
 					// gauss
 					double dividend =  Math.pow(deltaLength, 2);
-					double divisor = (2 * Math.pow(sigma, 2));
+					double divisor = (1 * Math.pow(sigma, 2));
 					double gauss = Math.exp(- dividend / divisor);
 					
-					// set length
-					//this.field[x][y][2] = Math.max(this.field[x][y][2], gauss);
-					this.field[x][y][2] += gauss;
+					// set angle
+					this.field[x][y][0] += deltaX * gauss;
+					this.field[x][y][1] += deltaY * gauss;
 				}
 			}
 		}
-
-		// set length again (only to show the ff)
-		// todo: remove this when ff view is disabled
+		// normalize when to strong
 		for (int x = 0; x < (int) this.worldWidth; x++) {
 			for (int y = 0; y < (int) this.worldHeight; y++) {
-				// normalize
 				double x2 = this.field[x][y][0] * this.field[x][y][0];
 				double y2 = this.field[x][y][1] * this.field[x][y][1];
 				double dl = Math.sqrt(x2 + y2);
-				if (dl != 0) {
+				if (dl > 1) {
 					this.field[x][y][0] /= dl;
 					this.field[x][y][1] /= dl;
-				}
-				// denormalize
-				if (this.field[x][y][2] != 0) {
-					this.field[x][y][0] *= this.field[x][y][2];
-					this.field[x][y][1] *= this.field[x][y][2];
 				}
 			}
 		}
