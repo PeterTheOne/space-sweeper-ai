@@ -482,7 +482,7 @@ public class PlayView extends View implements EventListener {
 //			camera.setViewPort(0, 0, scnSrv.getScreenWidth(), (int) height);						
 //		}
 		
-		double p = 0.98;
+		double p = 1;
 		int w = (int) (scnSrv.getScreenWidth() * p);
 		int h = (int) (scnSrv.getScreenHeight() * p);
 		int x = (scnSrv.getScreenWidth() - w) / 2;

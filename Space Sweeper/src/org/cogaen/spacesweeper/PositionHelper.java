@@ -1,5 +1,7 @@
 package org.cogaen.spacesweeper;
 
+import org.cogaen.spacesweeper.entity.BigAsteroid;
+
 public class PositionHelper {
 	
 	private double worldWidth;
@@ -8,8 +10,9 @@ public class PositionHelper {
 	private double shortTargetY;
 	
 	public PositionHelper(double worldWidth, double worldHeight) {
-		this.worldWidth = worldWidth;
-		this.worldHeight = worldHeight;
+		//todo: fix this, found in PlayView
+		this.worldWidth = worldWidth + BigAsteroid.RADIUS * 2;
+		this.worldHeight = worldHeight + BigAsteroid.RADIUS * 2;
 		this.shortTargetX = 0;
 		this.shortTargetY = 0;
 	}
