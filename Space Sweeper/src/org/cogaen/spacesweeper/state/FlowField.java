@@ -116,7 +116,7 @@ public class FlowField implements Engageable {
 				continue;
 			}
 			
-			double sigma = 3;
+			double sigma = 2;
 			double gaussRadius = (int) Math.ceil(sigma * 3.0f);
 
 			int startX = (int) Math.floor((pose2D.getPosX() + this.worldWidthHalf  - gaussRadius + worldWidth) % Math.floor(worldWidth));
@@ -138,12 +138,6 @@ public class FlowField implements Engageable {
 					double deltaY = newY - pose2D.getPosY();
 					double deltaLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 					
-					// normalize
-					if (deltaLength != 0) {
-						deltaX /= deltaLength;
-						deltaY /= deltaLength;
-					}
-					
 					// set angle
 					this.field[x][y][0] += deltaX;
 					this.field[x][y][1] += deltaY;
@@ -154,7 +148,8 @@ public class FlowField implements Engageable {
 					double gauss = Math.exp(- dividend / divisor);
 					
 					// set length
-					this.field[x][y][2] = Math.max(this.field[x][y][2], gauss);
+					//this.field[x][y][2] = Math.max(this.field[x][y][2], gauss);
+					this.field[x][y][2] += gauss;
 				}
 			}
 		}
@@ -163,6 +158,15 @@ public class FlowField implements Engageable {
 		// todo: remove this when ff view is disabled
 		for (int x = 0; x < (int) this.worldWidth; x++) {
 			for (int y = 0; y < (int) this.worldHeight; y++) {
+				// normalize
+				double x2 = this.field[x][y][0] * this.field[x][y][0];
+				double y2 = this.field[x][y][1] * this.field[x][y][1];
+				double dl = Math.sqrt(x2 + y2);
+				if (dl != 0) {
+					this.field[x][y][0] /= dl;
+					this.field[x][y][1] /= dl;
+				}
+				// denormalize
 				if (this.field[x][y][2] != 0) {
 					this.field[x][y][0] *= this.field[x][y][2];
 					this.field[x][y][1] *= this.field[x][y][2];
