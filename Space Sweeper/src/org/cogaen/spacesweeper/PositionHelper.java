@@ -74,4 +74,21 @@ public class PositionHelper {
 		return this.shortTargetY;
 	}
 	
+	public double calculateAngle(double bodyAngle, double bodyX, double bodyY, 
+			double targetX, double targetY) {
+		double dx = targetX - bodyX;
+		double dy = targetY - bodyY;
+		
+		if (dx == 0 && dy == 0) {
+			return 0;
+		}
+		
+		double txr = dx * Math.cos(-bodyAngle) - dy * Math.sin(-bodyAngle);
+		double tyr = dy * Math.cos(-bodyAngle) + dx * Math.sin(-bodyAngle);
+
+		double l = Math.sqrt(txr * txr + tyr * tyr);
+		txr /= l;
+		return txr;
+	}
+	
 }

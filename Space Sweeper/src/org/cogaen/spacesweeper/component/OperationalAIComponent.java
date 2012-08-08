@@ -37,6 +37,7 @@ import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
 import org.cogaen.lwjgl.input.ControllerState;
 import org.cogaen.name.CogaenId;
+import org.cogaen.spacesweeper.PositionHelper;
 import org.cogaen.spacesweeper.entity.OperationalAIInterface;
 import org.cogaen.spacesweeper.event.FlowFieldUpdatedEvent;
 import org.cogaen.spacesweeper.event.TargetChangeEvent;
@@ -54,8 +55,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 
 	private CogaenId bodyAttrId;
 	private Body body;
-	private double targetPosX;
-	private double targetPosY;
+	private double targetAngle;
 	private PidController thrustPid;
 	private PidController anglePid;
 	private Timer timer;
@@ -77,8 +77,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	@Override
 	public void engage() {
 		super.engage();
-		this.targetPosX = this.body.getPositionX();
-		this.targetPosY = this.body.getPositionY();
+		this.targetAngle = 0;
 		this.thrustPid = new PidController(0.03, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
 		this.anglePid = new PidController(2.50, 0.0, 0.0);
@@ -103,38 +102,20 @@ public class OperationalAIComponent extends UpdateableComponent implements
 		double speed = this.body.getSpeed();
 		this.thrustPid.update(speed, this.timer.getDeltaTime());
 
-		double vPos = this.thrustPid.getOutput();
+		this.vPos = this.thrustPid.getOutput();
 
-		this.vPos = vPos > 1 ? 1 : vPos;
+		this.vPos = this.vPos > 1 ? 1 : this.vPos;
 		this.vPos = this.vPos < 0 ? 0 : this.vPos;
 	}
 
 	private void updateAngle() {
-		double dx = 0;
-		double dy = 0;
-		
-		dx = this.targetPosX - this.body.getPositionX();
-		dy = this.targetPosY - this.body.getPositionY();
-		
-		if (dx == 0 && dy == 0) {
-			this.anglePid.update(0, this.timer.getDeltaTime());
-			this.hPos = -this.anglePid.getOutput();
-			return;
-		}
-		
-		double txr = dx * Math.cos(-this.body.getAngularPosition()) - dy * Math.sin(-this.body.getAngularPosition());
-		double tyr = dy * Math.cos(-this.body.getAngularPosition()) + dx * Math.sin(-this.body.getAngularPosition());
-
-		double l = Math.sqrt(txr * txr + tyr * tyr);
-		txr /= l;
-		
-		this.anglePid.update(txr, this.timer.getDeltaTime());
+		this.anglePid.update(this.targetAngle, this.timer.getDeltaTime());
 		
 		
-		double hPos = -this.anglePid.getOutput();
+		this.hPos = -this.anglePid.getOutput();
 		
-		this.hPos = hPos > 1 ? 1 : hPos;
-		this.hPos = hPos < -1 ? -1 : hPos;
+		this.hPos = this.hPos > 1 ? 1 : this.hPos;
+		this.hPos = this.hPos < -1 ? -1 : this.hPos;
 	}
 
 	public double getVerticalPosition() {
@@ -148,14 +129,10 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	public boolean getButton(int idx) {
 		return this.buttons[idx];
 	}
-	
+
 	@Override
-	public void setTarget(double targetPosX, double targetPosY) {
-		this.targetPosX = targetPosX;
-		this.targetPosY = targetPosY;
-		Event event = new TargetChangeEvent(this.body.getPositionX(), 
-				this.body.getPositionY(), this.targetPosX, this.targetPosY);
-		EventService.getInstance(getCore()).dispatchEvent(event);
+	public void setTargetAngle(double targetAngle) {
+		this.targetAngle = targetAngle;
 	}
 	
 	@Override

@@ -94,41 +94,47 @@ public class TacticalAIComponent extends UpdateableComponent {
 		double targetPosX = this.positionHelper.getTargetX();
 		double targetPosY = this.positionHelper.getTargetY();
 		
-		double dx = targetPosX - this.body.getPositionX();
-		double dy = targetPosY - this.body.getPositionY();
-		double dl = Math.sqrt(dx * dx + dy * dy);
+		// calculate target Angle
+		double angle1 = positionHelper.calculateAngle(this.body.getAngularPosition(), 
+				this.body.getPositionX(), this.body.getPositionY(), targetPosX, targetPosY);
 
 		// add flowfield avoidance to target position
 		double ffX = 0;
 		double ffY = 0;
-		// should this be proportional to the distance to target...
-		double ffFactor = dl * 6;
+		double angle2 = 0;
 		// get flow field vector
-		if (this.flowfield != null) {
+		if (this.flowfield == null) {
+			this.opAI.setTargetAngle(angle1);
+		} else {
 			this.flowfield.calculateFlow(
 					this.body.getPositionX(), 
 					this.body.getPositionY());
-			ffX = this.flowfield.getFlowX() * ffFactor;
-			ffY = this.flowfield.getFlowY() * ffFactor;
+			ffX = this.flowfield.getFlowX();
+			ffY = this.flowfield.getFlowY();
+			
+			// calculate ff angle
+			angle2 = positionHelper.calculateAngle(this.body.getAngularPosition(), 
+					this.body.getPositionX(), this.body.getPositionY(), 
+					this.body.getPositionX() + ffX, 
+					this.body.getPositionY() + ffY);
+			
+			// blend between target and ff by ff strength
+			double dl = Math.sqrt(ffX * ffX + ffY * ffY);
+			double finalAngle = angle1 + (angle2 - angle1) * dl;
+			
+			// set move command
+			this.opAI.setTargetAngle(finalAngle);
+			LoggingService log = LoggingService.getInstance(getCore());
+			log.logInfo("TacAIComp", "dl: " + dl);
 		}
-		targetPosX += ffX;
-		targetPosY += ffY;
 		
 		// calculate speed
-		dx = targetPosX - this.body.getPositionX();
-		dy = targetPosY - this.body.getPositionY();
-		dl = Math.sqrt(dx * dx + dy * dy);
-		double speed = dl / 1.5d;
-		this.opAI.setTargetSpeed(speed);
-		
-		//LoggingService log = LoggingService.getInstance(getCore());
-		//log.logInfo("TacAIComp", "speed: " + speed);
+		// todo: calculate speed by blending distance to target and distance to 
+		//       asteroid into a severity count into a speed
+		this.opAI.setTargetSpeed(6);
 		
 		// shoot
 		this.opAI.setShoot(true);
-		
-		// set move command
-		this.opAI.setTarget(targetPosX, targetPosY);
 	}
 	
 	
