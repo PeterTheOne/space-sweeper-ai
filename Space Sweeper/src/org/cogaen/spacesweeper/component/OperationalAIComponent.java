@@ -78,7 +78,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	public void engage() {
 		super.engage();
 		this.targetAngle = 0;
-		this.thrustPid = new PidController(0.03, 0.03, 0.03);
+		this.thrustPid = new PidController(0.7, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
 		this.anglePid = new PidController(2.50, 0.0, 0.0);
 		this.anglePid.setTarget(0);

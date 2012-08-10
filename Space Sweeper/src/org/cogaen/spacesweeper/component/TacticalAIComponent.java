@@ -97,6 +97,10 @@ public class TacticalAIComponent extends UpdateableComponent {
 		// calculate target Angle
 		double angle1 = positionHelper.calculateAngle(this.body.getAngularPosition(), 
 				this.body.getPositionX(), this.body.getPositionY(), targetPosX, targetPosY);
+		
+		// todo: calculate speed by distance to target
+		//       when close -> stop
+		double speed1 = 5;
 
 		// add flowfield avoidance to target position
 		double ffX = 0;
@@ -105,7 +109,9 @@ public class TacticalAIComponent extends UpdateableComponent {
 		// get flow field vector
 		if (this.flowfield == null) {
 			this.opAI.setTargetAngle(angle1);
+			this.opAI.setTargetSpeed(speed1);
 		} else {
+			// calculate ff direction
 			this.flowfield.calculateFlow(
 					this.body.getPositionX(), 
 					this.body.getPositionY());
@@ -118,20 +124,22 @@ public class TacticalAIComponent extends UpdateableComponent {
 					this.body.getPositionX() + ffX, 
 					this.body.getPositionY() + ffY);
 			
-			// blend between target and ff by ff strength
+			// calculate speed by distance to ff
+			double speed2 = 8;
+			
+			// blend angle between target and ff by ff strength
 			double dl = Math.sqrt(ffX * ffX + ffY * ffY);
 			double finalAngle = angle1 + (angle2 - angle1) * dl;
 			
 			// set move command
 			this.opAI.setTargetAngle(finalAngle);
-			LoggingService log = LoggingService.getInstance(getCore());
-			log.logInfo("TacAIComp", "dl: " + dl);
+			
+			// blend speed between target and ff by ff strength
+			double finalSpeed = speed1 + (speed2 - speed1) * dl;
+			
+			// set final speed
+			this.opAI.setTargetSpeed(finalSpeed);
 		}
-		
-		// calculate speed
-		// todo: calculate speed by blending distance to target and distance to 
-		//       asteroid into a severity count into a speed
-		this.opAI.setTargetSpeed(6);
 		
 		// shoot
 		this.opAI.setShoot(true);

@@ -115,7 +115,7 @@ public class FlowField implements Engageable {
 				continue;
 			}
 			
-			double sigma = 3;
+			double sigma = 4;
 			double gaussRadius = (int) Math.ceil(sigma * 3.0f);
 
 			int startX = (int) Math.floor((pose2D.getPosX() + this.worldWidthHalf  - gaussRadius + worldWidth) % Math.floor(worldWidth));
