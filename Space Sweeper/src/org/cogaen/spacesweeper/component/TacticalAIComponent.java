@@ -108,8 +108,7 @@ public class TacticalAIComponent extends UpdateableComponent {
 		double angle2 = 0;
 		// get flow field vector
 		if (this.flowfield == null) {
-			this.opAI.setTargetAngle(angle1);
-			this.opAI.setTargetSpeed(speed1);
+			this.opAI.setTargetAngleAndSpeed(angle1, speed1);
 		} else {
 			// calculate ff direction
 			this.flowfield.calculateFlow(
@@ -131,14 +130,10 @@ public class TacticalAIComponent extends UpdateableComponent {
 			double dl = Math.sqrt(ffX * ffX + ffY * ffY);
 			double finalAngle = angle1 + (angle2 - angle1) * dl;
 			
-			// set move command
-			this.opAI.setTargetAngle(finalAngle);
-			
 			// blend speed between target and ff by ff strength
 			double finalSpeed = speed1 + (speed2 - speed1) * dl;
-			
-			// set final speed
-			this.opAI.setTargetSpeed(finalSpeed);
+			// set move command
+			this.opAI.setTargetAngleAndSpeed(finalAngle, finalSpeed);
 		}
 		
 		// shoot

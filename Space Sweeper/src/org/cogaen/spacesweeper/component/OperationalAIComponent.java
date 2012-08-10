@@ -56,6 +56,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private CogaenId bodyAttrId;
 	private Body body;
 	private double targetAngle;
+	private double targetSpeed;
 	private PidController thrustPid;
 	private PidController anglePid;
 	private Timer timer;
@@ -78,7 +79,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	public void engage() {
 		super.engage();
 		this.targetAngle = 0;
-		this.thrustPid = new PidController(0.7, 0.03, 0.03);
+		this.thrustPid = new PidController(1, 0.03, 0.03);
 		this.thrustPid.setTarget(0);
 		this.anglePid = new PidController(2.50, 0.0, 0.0);
 		this.anglePid.setTarget(0);
@@ -99,21 +100,30 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	}
 
 	private void updateThrust() {
-		double speed = this.body.getSpeed();
-		this.thrustPid.update(speed, this.timer.getDeltaTime());
+		// calculate how much speed to set
+		// only speed up if angle is the correct target angle! :)
+		double finalSpeed = this.targetSpeed * (1 - Math.abs(this.targetAngle / Math.PI));
+		
+		// set pid target
+		this.thrustPid.setTarget(finalSpeed);
+		
+		// update tur
+		this.thrustPid.update(this.body.getSpeed(), this.timer.getDeltaTime());
 
+		// set hPos
 		this.vPos = this.thrustPid.getOutput();
-
 		this.vPos = this.vPos > 1 ? 1 : this.vPos;
 		this.vPos = this.vPos < 0 ? 0 : this.vPos;
 	}
 
 	private void updateAngle() {
+		// target is always zero
+		
+		// update anglePid
 		this.anglePid.update(this.targetAngle, this.timer.getDeltaTime());
 		
-		
+		// set hPos
 		this.hPos = -this.anglePid.getOutput();
-		
 		this.hPos = this.hPos > 1 ? 1 : this.hPos;
 		this.hPos = this.hPos < -1 ? -1 : this.hPos;
 	}
@@ -131,17 +141,13 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	}
 
 	@Override
-	public void setTargetAngle(double targetAngle) {
-		this.targetAngle = targetAngle;
-	}
-	
-	@Override
-	public void setTargetSpeed(double targetSpeed) {
-		this.thrustPid.setTarget(targetSpeed);
+	public void setShoot(boolean shoot) {
+		this.buttons[0] = true;
 	}
 
 	@Override
-	public void setShoot(boolean shoot) {
-		this.buttons[0] = true;
+	public void setTargetAngleAndSpeed(double targetAngle, double targetSpeed) {
+		this.targetAngle = targetAngle;
+		this.targetSpeed = targetSpeed;
 	}
 }
