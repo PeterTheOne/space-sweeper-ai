@@ -98,9 +98,19 @@ public class TacticalAIComponent extends UpdateableComponent {
 		double angle1 = positionHelper.calculateAngle(this.body.getAngularPosition(), 
 				this.body.getPositionX(), this.body.getPositionY(), targetPosX, targetPosY);
 		
-		// todo: calculate speed by distance to target
-		//       when close -> stop
-		double speed1 = 5;
+		// calculate speed by distance to target
+		double dx = targetPosX - this.body.getPositionX();
+		double dy = targetPosY - this.body.getPositionY();
+		double distance = Math.sqrt(dx * dx + dy * dy);
+		
+		double maxSpeed = 8;
+		double slowingDistance = 12;
+		double stopDistance = 4;
+		
+		double rampedSpeed = maxSpeed * ((distance - stopDistance) / (slowingDistance - stopDistance));
+		double speed1 = Math.min(rampedSpeed, maxSpeed);
+		speed1 = Math.max(0, speed1);
+		
 
 		// add flowfield avoidance to target position
 		double ffX = 0;
