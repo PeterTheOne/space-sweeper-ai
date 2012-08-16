@@ -124,7 +124,7 @@ public class TacticalAIComponent extends UpdateableComponent {
 					this.body.getPositionY() + ffY);
 			
 			// calculate speed by distance to ff
-			double speed2 = 8;
+			double speed2 = 10;
 			
 			// blend angle between target and ff by ff strength
 			double dl = Math.sqrt(ffX * ffX + ffY * ffY);

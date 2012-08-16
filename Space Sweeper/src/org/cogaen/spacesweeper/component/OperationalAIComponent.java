@@ -79,7 +79,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	public void engage() {
 		super.engage();
 		this.targetAngle = 0;
-		this.thrustPid = new PidController(1, 0.03, 0.03);
+		this.thrustPid = new PidController(2, 0.0, 0.0);
 		this.thrustPid.setTarget(0);
 		this.anglePid = new PidController(2.50, 0.0, 0.0);
 		this.anglePid.setTarget(0);
@@ -102,7 +102,8 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private void updateThrust() {
 		// calculate how much speed to set
 		// only speed up if angle is the correct target angle! :)
-		double finalSpeed = this.targetSpeed * (1 - Math.abs(this.targetAngle / Math.PI));
+		// todo: why 3?
+		double finalSpeed = this.targetSpeed * (1 - Math.abs(this.targetAngle / 3 * Math.PI));
 		
 		// set pid target
 		this.thrustPid.setTarget(finalSpeed);
