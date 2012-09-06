@@ -39,17 +39,9 @@ public class PositionHelper {
 		double distX = Math.abs(diffX);
 		if (distX > this.worldWidth / 2d) {
 			if (diffX < 0) {
-				double altTargetPosX = targetX + this.worldWidth;
-				double altDist = Math.abs(altTargetPosX - startX);
-				if (altDist < distX) {
-					this.shortTargetX = altTargetPosX;
-				}
+				this.shortTargetX = targetX + this.worldWidth;
 			} else {
-				double altTargetPosX = targetX - this.worldWidth;
-				double altDist = Math.abs(altTargetPosX - startX);
-				if (altDist < distX) {
-					this.shortTargetX = altTargetPosX;
-				}
+				this.shortTargetX = targetX - this.worldWidth;
 			}
 		}
 		
@@ -58,17 +50,9 @@ public class PositionHelper {
 		double distY = Math.abs(diffY);
 		if (distY > this.worldHeight / 2d) {
 			if (diffY < 0) {
-				double altTargetPosY = targetY + this.worldHeight;
-				double altDist = Math.abs(altTargetPosY - startY);
-				if (altDist < distY) {
-					this.shortTargetY = altTargetPosY;
-				}
+				this.shortTargetY = targetY + this.worldHeight;
 			} else {
-				double altTargetPosY = targetY - this.worldHeight;
-				double altDist = Math.abs(altTargetPosY - startY);
-				if (altDist < distY) {
-					this.shortTargetY = altTargetPosY;
-				}
+				this.shortTargetY = targetY - this.worldHeight;
 			}
 		}
 	}
