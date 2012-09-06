@@ -1,0 +1,133 @@
+<class-diagram version="1.0.10" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.cogaen.spacesweeper.component.OperationalAIComponent" 
+    project="Space Sweeper" file="/Space Sweeper/src/org/cogaen/spacesweeper/component/OperationalAIComponent.java" 
+    binary="false">    
+    <position x="197" y="446" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.cogaen.lwjgl.input.ControllerComponent" 
+    project="Cogaen LWJGL" file="/Cogaen LWJGL/src/org/cogaen/lwjgl/input/ControllerComponent.java" binary="false">    
+    <position x="493" y="351" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="org.cogaen.lwjgl.input.ControllerComponent.UpdateEvent" 
+    project="Cogaen LWJGL" file="/Cogaen LWJGL/src/org/cogaen/lwjgl/input/ControllerComponent.java" binary="false">    
+    <position x="815" y="374" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" 
+    name="org.cogaen.lwjgl.input.ControllerComponent.HorizontalUpdateEvent" project="Cogaen LWJGL" 
+    file="/Cogaen LWJGL/src/org/cogaen/lwjgl/input/ControllerComponent.java" binary="false">    
+    <position x="625" y="761" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="5" corner="BOTTOM_RIGHT" language="java" 
+    name="org.cogaen.lwjgl.input.ControllerComponent.VerticalUpdateEvent" project="Cogaen LWJGL" 
+    file="/Cogaen LWJGL/src/org/cogaen/lwjgl/input/ControllerComponent.java" binary="false">    
+    <position x="870" y="761" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" 
+    name="org.cogaen.lwjgl.input.ControllerComponent.ButtonlUpdateEvent" project="Cogaen LWJGL" 
+    file="/Cogaen LWJGL/src/org/cogaen/lwjgl/input/ControllerComponent.java" binary="false">    
+    <position x="380" y="769" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="org.cogaen.entity.UpdateableComponent" project="Cogaen Core" 
+    file="/Cogaen Core/src/org/cogaen/entity/UpdateableComponent.java" binary="false">    
+    <position x="148" y="769" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <interface id="8" corner="BOTTOM_RIGHT" language="java" name="org.cogaen.lwjgl.input.ControllerState" 
+    project="Cogaen LWJGL" file="/Cogaen LWJGL/src/org/cogaen/lwjgl/input/ControllerState.java" binary="false">    
+    <position x="409" y="121" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <interface id="9" corner="BOTTOM_RIGHT" language="java" name="org.cogaen.spacesweeper.entity.OperationalAIInterface" 
+    project="Space Sweeper" file="/Space Sweeper/src/org/cogaen/spacesweeper/entity/OperationalAIInterface.java" 
+    binary="false">    
+    <position x="197" y="113" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <realization id="10">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="8"/>  
+  </realization>  
+  <nesting id="11">    
+    <bendpoint x="673" y="519"/>    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </nesting>  
+  <nesting id="12">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="3"/>  
+  </nesting>  
+  <nesting id="13">    
+    <bendpoint x="370" y="519"/>    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </nesting>  
+  <generalization id="14">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <realization id="15">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="8"/>  
+  </realization>  
+  <generalization id="16">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <nesting id="17">    
+    <bendpoint x="796" y="519"/>    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
+  </nesting>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <realization id="20">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="9"/>  
+  </realization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
