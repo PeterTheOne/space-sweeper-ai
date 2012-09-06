@@ -65,6 +65,20 @@ public class PositionHelper {
 		return this.shortTargetY;
 	}
 	
+	/**
+	 * calculateAngle
+	 * 
+	 * Transforms target point into object space.
+	 * 
+	 * In parts copied from CruiseComponent
+	 * 
+	 * @param bodyAngle
+	 * @param bodyX
+	 * @param bodyY
+	 * @param targetX
+	 * @param targetY
+	 * @return
+	 */
 	public double calculateAngle(double bodyAngle, double bodyX, double bodyY, 
 			double targetX, double targetY) {
 		double dx = targetX - bodyX;
