@@ -35,6 +35,7 @@ import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
+import org.cogaen.logging.LoggingService;
 import org.cogaen.lwjgl.input.ControllerState;
 import org.cogaen.name.CogaenId;
 import org.cogaen.spacesweeper.PositionHelper;
@@ -102,8 +103,7 @@ public class OperationalAIComponent extends UpdateableComponent implements
 	private void updateThrust() {
 		// calculate how much speed to set
 		// only speed up if angle is the correct target angle! :)
-		// todo: why 3?
-		double finalSpeed = this.targetSpeed * (1 - Math.abs(this.targetAngle / 3 * Math.PI));
+		double finalSpeed = this.targetSpeed * (1 - Math.abs(this.targetAngle));
 		
 		// set pid target
 		this.thrustPid.setTarget(finalSpeed);
