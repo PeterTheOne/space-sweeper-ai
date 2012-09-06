@@ -33,35 +33,42 @@ public class PositionHelper {
 	 */
 	public void setTarget(double startX, double startY, double targetX, 
 			double targetY) {
+		
 		this.shortTargetX = targetX;
-		double distX = Math.abs(targetX - startX);
-		if (startX > 0 && targetX < 0) {
-			double altTargetPosX = targetX + this.worldWidth;
-			double altDist = Math.abs(altTargetPosX - startX);
-			if (altDist < distX) {
-				this.shortTargetX = altTargetPosX;
-			}
-		} else if (startX < 0 && targetX > 0) {
-			double altTargetPosX = targetX - this.worldWidth;
-			double altDist = Math.abs(altTargetPosX - startX);
-			if (altDist < distX) {
-				this.shortTargetX = altTargetPosX;
+		double diffX = targetX - startX;
+		double distX = Math.abs(diffX);
+		if (distX > this.worldWidth / 2d) {
+			if (diffX < 0) {
+				double altTargetPosX = targetX + this.worldWidth;
+				double altDist = Math.abs(altTargetPosX - startX);
+				if (altDist < distX) {
+					this.shortTargetX = altTargetPosX;
+				}
+			} else {
+				double altTargetPosX = targetX - this.worldWidth;
+				double altDist = Math.abs(altTargetPosX - startX);
+				if (altDist < distX) {
+					this.shortTargetX = altTargetPosX;
+				}
 			}
 		}
 		
 		this.shortTargetY = targetY;
-		double distY = Math.abs(targetY - startY);
-		if (startY > 0 && targetY < 0) {
-			double altTargetPosY = targetY + this.worldHeight;
-			double altDist = Math.abs(altTargetPosY - startY);
-			if (altDist < distY) {
-				this.shortTargetY = altTargetPosY;
-			}
-		} else if (startY < 0 && targetY > 0) {
-			double altTargetPosY = targetY - this.worldHeight;
-			double altDist = Math.abs(altTargetPosY - startY);
-			if (altDist < distY) {
-				this.shortTargetY = altTargetPosY;
+		double diffY = targetY - startY;
+		double distY = Math.abs(diffY);
+		if (distY > this.worldHeight / 2d) {
+			if (diffY < 0) {
+				double altTargetPosY = targetY + this.worldHeight;
+				double altDist = Math.abs(altTargetPosY - startY);
+				if (altDist < distY) {
+					this.shortTargetY = altTargetPosY;
+				}
+			} else {
+				double altTargetPosY = targetY - this.worldHeight;
+				double altDist = Math.abs(altTargetPosY - startY);
+				if (altDist < distY) {
+					this.shortTargetY = altTargetPosY;
+				}
 			}
 		}
 	}
