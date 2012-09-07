@@ -193,31 +193,6 @@ public class FlowField implements Engageable {
 		double term2Y = (1 - tx) * P2y + tx * P3y;
 		this.resultY = (1 - ty) * term1Y + ty * term2Y;
 	}
-	
-	// todo: test this function
-	public double getFlowStrength(double x, double y) {
-		x += worldWidthHalf;
-		y += worldHeightHalf;
-		
-		double tx = x - Math.floor(x);
-		double ty = y - Math.floor(y);
-
-		int x0 = (int) (Math.floor(x + worldWidth)			% Math.floor(worldWidth));
-		int x1 = (int) (Math.floor(x + worldWidth + 1)		% Math.floor(worldWidth));
-		int y0 = (int) (Math.floor(y + worldHeight)			% Math.floor(worldHeight));
-		int y1 = (int) (Math.floor(y + worldHeight + 1)		% Math.floor(worldHeight));
-
-		double P0 = this.field[x0][y0][2];
-		double P1 = this.field[x1][y0][2];
-		double P2 = this.field[x0][y1][2];
-		double P3 = this.field[x1][y1][2];
-
-		double term1 = (1 - tx) * P0 + tx * P1;
-		double term2 = (1 - tx) * P2 + tx * P3;
-		double result = (1 - ty) * term1 + ty * term2;
-		
-		return result;
-	}
 
 	public double getFlowX() {
 		return this.resultX;
